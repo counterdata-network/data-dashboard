@@ -1,6 +1,6 @@
 import unittest
 
-import processor.projects as projects
+import dashboard.projects as projects
 
 
 class TestProjects(unittest.TestCase):
