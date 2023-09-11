@@ -1,0 +1,9 @@
+{
+  "name": "Feminicide Story Dashboard",
+  "description": "",
+  "scripts": {
+    "dokku": {
+      "predeploy": ""
+    }
+  }
+}
