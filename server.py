@@ -1,5 +1,7 @@
-import altair
 import streamlit as st
+st.set_page_config(layout="wide")
+
+import altair
 import pandas as pd
 from dashboard import PLATFORMS
 import dashboard.projects as projects
@@ -71,7 +73,6 @@ def latest_stories(stories):
         st.markdown('URL: [link](story.url)')
         st.markdown('Model Score: ' + str(s.model_score))
     return
-
 
 st.title('Feminicides Story Dashboard')
 st.markdown('Investigate stories moving through the feminicides detection pipeline')
