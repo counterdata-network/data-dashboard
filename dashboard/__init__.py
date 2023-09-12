@@ -27,7 +27,7 @@ logger.info("Starting up Feminicide Dashboard v{}".format(VERSION))
 SENTRY_DSN = os.environ.get('SENTRY_DSN', None)  # optional
 if SENTRY_DSN:
     sentry_sdk.init(
-        dsn="SENTRY_DSN",
+        dsn=SENTRY_DSN,
         integrations=[TornadoIntegration()],
         release=VERSION,
         # Set traces_sample_rate to 1.0 to capture 100% of transactions for performance monitoring.
