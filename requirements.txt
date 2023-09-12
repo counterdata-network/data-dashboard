@@ -4,3 +4,4 @@ pandas==2.1.*
 streamlit==1.26.*
 altair==5.1.*
 sentry_sdk==1.30.*
+aiocontextvars==0.2.*

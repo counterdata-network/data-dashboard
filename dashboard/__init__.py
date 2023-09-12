@@ -2,9 +2,11 @@ import os
 import logging
 import sys
 from dotenv import load_dotenv
-from sentry_sdk import init
+import sentry_sdk
+from sentry_sdk.integrations.tornado import TornadoIntegration
 
-VERSION = "0.0.1"
+
+VERSION = "0.0.2"
 #SOURCE_GOOGLE_ALERTS = "google-alerts"
 SOURCE_MEDIA_CLOUD = "media-cloud"
 SOURCE_NEWSCATCHER = "newscatcher"
@@ -24,7 +26,14 @@ logger.info("Starting up Feminicide Dashboard v{}".format(VERSION))
 
 SENTRY_DSN = os.environ.get('SENTRY_DSN', None)  # optional
 if SENTRY_DSN:
-    init(dsn=SENTRY_DSN, release=VERSION)
+    sentry_sdk.init(
+        dsn="SENTRY_DSN",
+        integrations=[TornadoIntegration()],
+        release=VERSION,
+        # Set traces_sample_rate to 1.0 to capture 100% of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        #traces_sample_rate=1.0,
+    )
     logger.info("  SENTRY_DSN: {}".format(SENTRY_DSN))
 else:
     logger.info("  Not logging errors to Sentry")
