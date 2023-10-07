@@ -9,9 +9,19 @@ import dashboard.database.processor_db as processor_db
 
 
 def draw_graph(func, project_id=None):
+    """
+    Draw a graph based on data returned by a provided function from processor_db.
+
+    Parameters:
+        project_id (int, optional): The project ID (default is None).
+
+    Returns:
+        None
+    """
     df_list = []
     for p in PLATFORMS:
-        results = func(project_id=project_id, platform=p, above_threshold=False)
+        # Pass the above_threshold parameter from the processor_db function
+        results = func(project_id=project_id, platform=p)
         df = pd.DataFrame(results)
         df['platform'] = p
         df_list.append(df)
