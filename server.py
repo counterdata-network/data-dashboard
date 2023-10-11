@@ -8,20 +8,21 @@ import dashboard.projects as projects
 import dashboard.database.processor_db as processor_db
 
 
-def draw_graph(func, project_id=None):
+def draw_graph(func, project_id=None, above_threshold=None):
     """
     Draw a graph based on data returned by a provided function from processor_db.
 
     Parameters:
         project_id (int, optional): The project ID (default is None).
+        above_threshold (bool, optional): Filter results for above-threshold stories (default is None).
 
     Returns:
         None
     """
     df_list = []
     for p in PLATFORMS:
-        # Pass the above_threshold parameter from the processor_db function
-        results = func(project_id=project_id, platform=p)
+        # Pass the above_threshold parameter to the processor_db function
+        results = func(project_id=project_id, platform=p, above_threshold=above_threshold)
         df = pd.DataFrame(results)
         df['platform'] = p
         df_list.append(df)
@@ -91,15 +92,15 @@ st.divider()
 st.subheader('Above Threshold Stories (by date sent to main server)')
 # by posted day
 st.caption("Platform Stories by Posted Day")
-draw_graph(processor_db.stories_by_posted_day)
+draw_graph(processor_db.stories_by_posted_day,above_threshold=True)
 st.divider()
 # History (by discovery date)
 st.subheader("History (by discovery date)")
 st.caption("Platform Stories by Published Day")
-draw_graph(processor_db.stories_by_published_day)
+draw_graph(processor_db.stories_by_published_day,above_threshold=False)
 st.caption("Platform Stories by Discovery Day")
-draw_graph(processor_db.stories_by_processed_day)
-st.caption("Platform Stories by Discovery Day")
+draw_graph(processor_db.stories_by_processed_day,above_threshold=False)
+st.caption("Platform Stories by Discovery Day by threshold")
 story_results_graph()
 st.divider()
 

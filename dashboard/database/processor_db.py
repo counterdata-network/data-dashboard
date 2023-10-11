@@ -61,7 +61,7 @@ def _stories_by_date_col(column_name: str, project_id: int = None, platform: str
     return _run_query(query)
 
 
-def stories_by_posted_day(project_id: int = None, platform: str = None, above_threshold: bool = True,
+def stories_by_posted_day(project_id: int = None, platform: str = None, above_threshold: bool = None,
                           is_posted: bool = None, limit: int = 45) -> List:
     return _stories_by_date_col('processed_date', project_id, platform, above_threshold, is_posted, limit)
 
