@@ -32,7 +32,7 @@ def draw_graph(func, project_id=None, above_threshold=None):
         x=altair.X('day', axis=altair.Axis(format='%m-%d')),
         y="stories",
         color="platform",
-        size=altair.SizeValue(5),
+        size=altair.SizeValue(8),
     )
     st.altair_chart(bar_chart, use_container_width=True)
     return
@@ -56,17 +56,17 @@ def story_results_graph(project_id=None):
     b = processor_db.stories_by_processed_day(project_id=project_id, above_threshold=False)
     df_list = []
     a = pd.DataFrame(a)
-    a['platform'] = 'above'
+    a['Threshold'] = 'above'
     b = pd.DataFrame(b)
-    b['platform'] = 'below'
+    b['Threshold'] = 'below'
     df_list.append(a)
     df_list.append(b)
     chart = pd.concat(df_list)
     bar_chart = altair.Chart(chart).mark_bar().encode(
         x=altair.X('day', axis=altair.Axis(format='%m-%d')),
         y="stories",
-        color="platform",
-        size=altair.SizeValue(5)
+        color="Threshold",
+        size=altair.SizeValue(8)
     )
     st.altair_chart(bar_chart, use_container_width=True)
     return
@@ -89,18 +89,18 @@ st.title('Feminicides Story Dashboard')
 st.markdown('Investigate stories moving through the feminicides detection pipeline')
 st.divider()
 
-st.subheader('Above Threshold Stories (by date sent to main server)')
+st.subheader('Above Threshold Stories (by posted date sent to main server)')
 # by posted day
-st.caption("Platform Stories by Posted Day")
+st.caption("All Above Threshold Stories Count by Platforms & the day they were Posted")
 draw_graph(processor_db.stories_by_posted_day,above_threshold=True)
 st.divider()
 # History (by discovery date)
 st.subheader("History (by discovery date)")
-st.caption("Platform Stories by Published Day")
-draw_graph(processor_db.stories_by_published_day,above_threshold=False)
-st.caption("Platform Stories by Discovery Day")
-draw_graph(processor_db.stories_by_processed_day,above_threshold=False)
-st.caption("Platform Stories by Discovery Day by threshold")
+st.caption("All Stories Count by Platforms & the day they were Published")
+draw_graph(processor_db.stories_by_published_day)
+st.caption("All Stories Count by Platforms & the day they were Processed")
+draw_graph(processor_db.stories_by_processed_day)
+st.caption("All stories Count by Threshold Level & the day they were Processed")
 story_results_graph()
 st.divider()
 
