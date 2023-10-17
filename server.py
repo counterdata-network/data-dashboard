@@ -7,6 +7,7 @@ from dashboard import PLATFORMS
 import dashboard.projects as projects
 import dashboard.database.processor_db as processor_db
 
+VERSION = "0.0.1"
 
 def draw_graph(func, project_id=None, above_threshold=None):
     """
@@ -85,7 +86,7 @@ def latest_stories(stories):
         st.markdown('Model Score: ' + str(s.model_score))
     return
 
-st.title('Feminicides Story Dashboard')
+st.title('Feminicides Story Dashboard {}'.format(VERSION))
 st.markdown('Investigate stories moving through the feminicides detection pipeline')
 st.divider()
 
