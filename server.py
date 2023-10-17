@@ -89,18 +89,22 @@ st.title('Feminicides Story Dashboard')
 st.markdown('Investigate stories moving through the feminicides detection pipeline')
 st.divider()
 
-st.subheader('Above Threshold Stories (by posted date sent to main server)')
+st.subheader('Stories Sent to Main Server')
 # by posted day
-st.caption("All Above Threshold Stories Count by Platforms & the day they were Posted")
+st.caption("Stories sent to the email alerts server based on the day they were run against the classifiers, "
+           "grouped by the data source they originally came from.")
 draw_graph(processor_db.stories_by_posted_day,above_threshold=True)
 st.divider()
 # History (by discovery date)
-st.subheader("History (by discovery date)")
-st.caption("All Stories Count by Platforms & the day they were Published")
+st.subheader("More History")
+st.caption("Stories discovered on each platform based on the guessed date of publication, grouped by the "
+           "data source they originally came from.")
 draw_graph(processor_db.stories_by_published_day)
-st.caption("All Stories Count by Platforms & the day they were Processed")
+st.caption("Stories based on the date they were run against the classifiers, grouped by the data source"
+           "they originally came from.")
 draw_graph(processor_db.stories_by_processed_day)
-st.caption("All stories Count by Threshold Level & the day they were Processed")
+st.caption("Stories based on the date they were run against the classifiers, grouped by whether they were above"
+           "threshold for their associated project or not.")
 story_results_graph()
 st.divider()
 
