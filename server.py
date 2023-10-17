@@ -8,10 +8,21 @@ import dashboard.projects as projects
 import dashboard.database.processor_db as processor_db
 
 
-def draw_graph(func, project_id=None):
+def draw_graph(func, project_id=None, above_threshold=None):
+    """
+    Draw a graph based on data returned by a provided function from processor_db.
+
+    Parameters:
+        project_id (int, optional): The project ID (default is None).
+        above_threshold (bool, optional): Filter results for above-threshold stories (default is None).
+
+    Returns:
+        None
+    """
     df_list = []
     for p in PLATFORMS:
-        results = func(project_id=project_id, platform=p, above_threshold=False)
+        # Pass the above_threshold parameter to the processor_db function
+        results = func(project_id=project_id, platform=p, above_threshold=above_threshold)
         df = pd.DataFrame(results)
         df['platform'] = p
         df_list.append(df)
@@ -21,7 +32,7 @@ def draw_graph(func, project_id=None):
         x=altair.X('day', axis=altair.Axis(format='%m-%d')),
         y="stories",
         color="platform",
-        size=altair.SizeValue(5),
+        size=altair.SizeValue(8),
     )
     st.altair_chart(bar_chart, use_container_width=True)
     return
@@ -45,17 +56,17 @@ def story_results_graph(project_id=None):
     b = processor_db.stories_by_processed_day(project_id=project_id, above_threshold=False)
     df_list = []
     a = pd.DataFrame(a)
-    a['platform'] = 'above'
+    a['Threshold'] = 'above'
     b = pd.DataFrame(b)
-    b['platform'] = 'below'
+    b['Threshold'] = 'below'
     df_list.append(a)
     df_list.append(b)
     chart = pd.concat(df_list)
     bar_chart = altair.Chart(chart).mark_bar().encode(
         x=altair.X('day', axis=altair.Axis(format='%m-%d')),
         y="stories",
-        color="platform",
-        size=altair.SizeValue(5)
+        color="Threshold",
+        size=altair.SizeValue(8)
     )
     st.altair_chart(bar_chart, use_container_width=True)
     return
@@ -78,18 +89,22 @@ st.title('Feminicides Story Dashboard')
 st.markdown('Investigate stories moving through the feminicides detection pipeline')
 st.divider()
 
-st.subheader('Above Threshold Stories (by date sent to main server)')
+st.subheader('Stories Sent to Main Server')
 # by posted day
-st.caption("Platform Stories by Posted Day")
-draw_graph(processor_db.stories_by_posted_day)
+st.caption("Stories sent to the email alerts server based on the day they were run against the classifiers, "
+           "grouped by the data source they originally came from.")
+draw_graph(processor_db.stories_by_posted_day,above_threshold=True)
 st.divider()
 # History (by discovery date)
-st.subheader("History (by discovery date)")
-st.caption("Platform Stories by Published Day")
+st.subheader("More History")
+st.caption("Stories discovered on each platform based on the guessed date of publication, grouped by the "
+           "data source they originally came from.")
 draw_graph(processor_db.stories_by_published_day)
-st.caption("Platform Stories by Discovery Day")
+st.caption("Stories based on the date they were run against the classifiers, grouped by the data source"
+           "they originally came from.")
 draw_graph(processor_db.stories_by_processed_day)
-st.caption("Platform Stories by Discovery Day")
+st.caption("Stories based on the date they were run against the classifiers, grouped by whether they were above"
+           "threshold for their associated project or not.")
 story_results_graph()
 st.divider()
 
