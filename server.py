@@ -1,11 +1,13 @@
 import streamlit as st
+
 st.set_page_config(layout="wide")
 
 import altair
 import pandas as pd
-from dashboard import PLATFORMS
-import dashboard.projects as projects
+
 import dashboard.database.processor_db as processor_db
+import dashboard.projects as projects
+from dashboard import PLATFORMS
 
 VERSION = "0.0.1"
 

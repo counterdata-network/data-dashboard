@@ -1,9 +1,10 @@
 import datetime as dt
-from typing import List, Dict
 import logging
-import streamlit as st
+from typing import Dict, List
+
 import psycopg2
 import psycopg2.extras
+import streamlit as st
 
 from dashboard import PROCESSOR_DB_URI
 

@@ -1,10 +1,10 @@
-import os
 import logging
+import os
 import sys
-from dotenv import load_dotenv
-import sentry_sdk
-from sentry_sdk.integrations.tornado import TornadoIntegration
 
+import sentry_sdk
+from dotenv import load_dotenv
+from sentry_sdk.integrations.tornado import TornadoIntegration
 
 VERSION = "0.0.2"
 #SOURCE_GOOGLE_ALERTS = "google-alerts"

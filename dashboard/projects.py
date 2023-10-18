@@ -1,11 +1,11 @@
-from typing import List, Dict
-import os
-import sys
 import json
 import logging
+import os
+import sys
+from typing import Dict, List
 
-from dashboard import CONFIG_DIR
 import dashboard.apiclient as apiclient
+from dashboard import CONFIG_DIR
 
 logger = logging.getLogger(__name__)
 
