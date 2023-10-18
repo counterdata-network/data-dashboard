@@ -71,17 +71,17 @@ def story_results_graph(project_id=None):
     return
 
 def latest_stories(stories):
-    ids = [""] + [s.stories_id for s in stories]
+    ids = [""] + [s['stories_id'] for s in stories]
     story_id = st.selectbox(
         'Select story',
-        (ids))
+        (ids), key="stories_id")
     if story_id != "":
-        s = [story for story in stories_above if story.stories_id == story_id][0]
-        st.markdown('ID : ' + str(s.stories_id))
-        st.markdown('Source: ' + str(s.source))
-        st.markdown('Published Date: ' + str(s.published_date))
+        s = [story for story in stories if story['stories_id'] == story_id][0]
+        st.markdown('ID : ' + str(s['stories_id']))
+        st.markdown('Source: ' + str(s['source']))
+        st.markdown('Published Date: ' + str(s['published_date']))
         st.markdown('URL: [link](story.url)')
-        st.markdown('Model Score: ' + str(s.model_score))
+        st.markdown('Model Score: ' + str(s['model_score']))
     return
 
 st.title('Feminicides Story Dashboard')
@@ -183,20 +183,20 @@ if option != "":
     stories_above = processor_db.recent_stories(selected['id'], True)
     latest_stories(stories_above)
     for s in stories_above:
-        st.markdown('ID : ' + str(s.stories_id))
-        st.markdown('Source: ' + str(s.source))
-        st.markdown('Published Date: ' + str(s.published_date))
+        st.markdown('ID : ' + str(s['stories_id']))
+        st.markdown('Source: ' + str(s['source']))
+        st.markdown('Published Date: ' + str(s['published_date']))
         st.markdown('URL: [link](story.url)')
-        st.markdown('Model Score: ' + str(s.model_score))
+        st.markdown('Model Score: ' + str(s['model_score']))
     st.divider()
 
     st.caption("Below threshold")
     stories_below = processor_db.recent_stories(selected['id'], False)
     latest_stories(stories_below)
     for s in stories_below:
-        st.markdown('ID : ' + str(s.stories_id))
-        st.markdown('Source: ' + str(s.source))
-        st.markdown('Published Date: ' + str(s.published_date))
+        st.markdown('ID : ' + str(s['stories_id']))
+        st.markdown('Source: ' + str(s['source']))
+        st.markdown('Published Date: ' + str(s['published_date']))
         st.markdown('URL: [link](story.url)')
-        st.markdown('Model Score: ' + str(s.model_score))
+        st.markdown('Model Score: ' + str(s['model_score']))
     st.divider()
