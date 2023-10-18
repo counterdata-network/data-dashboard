@@ -18,3 +18,9 @@ exclude = [
     "processor/database/alembic"
 ]
 select = ["E4", "E7", "E9", "F", "I"]
+
+[tool.commitizen]
+# Configuration for commitizen, git messages standard
+name = "cz_conventional_commits"
+version = "3.6.0"
+tag_format = "v$version"
