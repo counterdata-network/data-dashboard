@@ -1,2 +1,2 @@
 #!/bin/sh
-streamlit run server.py --server.port 8000
+streamlit run Homepage.py --server.port 8000
