@@ -1,13 +1,13 @@
-import os
 import logging
+import os
 import sys
-from dotenv import load_dotenv
+
 import sentry_sdk
+from dotenv import load_dotenv
 from sentry_sdk.integrations.tornado import TornadoIntegration
 
-
 VERSION = "0.0.2"
-#SOURCE_GOOGLE_ALERTS = "google-alerts"
+# SOURCE_GOOGLE_ALERTS = "google-alerts"
 SOURCE_MEDIA_CLOUD = "media-cloud"
 SOURCE_NEWSCATCHER = "newscatcher"
 SOURCE_WAYBACK_MACHINE = "wayback-machine"
@@ -19,12 +19,14 @@ base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG_DIR = os.path.join(base_dir, "config")
 
 # set up logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(name)s | %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+)
 logger = logging.getLogger(__name__)
 logger.info("------------------------------------------------------------------------")
 logger.info("Starting up Feminicide Dashboard v{}".format(VERSION))
 
-SENTRY_DSN = os.environ.get('SENTRY_DSN', None)  # optional
+SENTRY_DSN = os.environ.get("SENTRY_DSN", None)  # optional
 if SENTRY_DSN:
     sentry_sdk.init(
         dsn=SENTRY_DSN,
@@ -32,25 +34,29 @@ if SENTRY_DSN:
         release=VERSION,
         # Set traces_sample_rate to 1.0 to capture 100% of transactions for performance monitoring.
         # We recommend adjusting this value in production.
-        #traces_sample_rate=1.0,
+        # traces_sample_rate=1.0,
     )
     logger.info("  SENTRY_DSN: {}".format(SENTRY_DSN))
 else:
     logger.info("  Not logging errors to Sentry")
 
-FEMINICIDE_API_URL = os.environ.get('FEMINICIDE_API_URL', None)
+FEMINICIDE_API_URL = os.environ.get("FEMINICIDE_API_URL", None)
 if FEMINICIDE_API_URL is None:
-    logger.error("  ❌ No FEMINICIDE_API_URL is specified. Bailing because we can't list projects to run!")
+    logger.error(
+        "  ❌ No FEMINICIDE_API_URL is specified. Bailing because we can't list projects to run!"
+    )
     sys.exit(1)
 else:
     logger.info("  Config server at at {}".format(FEMINICIDE_API_URL))
 
-FEMINICIDE_API_KEY = os.environ.get('FEMINICIDE_API_KEY', None)
+FEMINICIDE_API_KEY = os.environ.get("FEMINICIDE_API_KEY", None)
 if FEMINICIDE_API_KEY is None:
-    logger.error("  ❌ No FEMINICIDE_API_KEY is specified. Bailing because we can't send things to the main server without one")
+    logger.error(
+        "  ❌ No FEMINICIDE_API_KEY is specified. Bailing because we can't send things to the main server without one"
+    )
     sys.exit(1)
 
-PROCESSOR_DB_URI = os.environ.get('PROCESSOR_DB_URI', None)
+PROCESSOR_DB_URI = os.environ.get("PROCESSOR_DB_URI", None)
 if PROCESSOR_DB_URI is None:
     logger.warning("  ❌ ️No PROCESSOR_DB_URI is specified")
     sys.exit(1)

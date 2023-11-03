@@ -1,7 +1,16 @@
-python-dotenv==1.0.*
-psycopg2==2.9.*
-pandas==2.1.*
-streamlit==1.26.*
-altair==5.1.*
-sentry_sdk==1.30.*
-aiocontextvars==0.2.*
+# Libraries for application development
+python-dotenv==1.0.*     # Managing environment variables
+psycopg2==2.9.*          # Database interaction library
+pandas==2.1.*            # Data manipulation and analysis
+streamlit==1.26.*        # Framework for creating web applications
+altair==5.1.*            # Declarative statistical visualization library
+
+# Libraries for error tracking and handling
+sentry_sdk==1.30.*       # Error tracking and monitoring
+
+# Standard formatting utilities and tools
+aiocontextvars==0.2.*    # Context variables for asynchronous I/O
+pre-commit==3.5.0        # Code quality and style checks before commit
+black==23.9.1            # Code formatting tool
+commitizen==3.10.1       # Commit message convention tool
+ruff==0.0.292            # Pre-commit hook management tool

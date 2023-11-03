@@ -1,11 +1,11 @@
-from typing import List, Dict
-import os
-import sys
 import json
 import logging
+import os
+import sys
+from typing import Dict, List
 
-from dashboard import CONFIG_DIR
 import dashboard.apiclient as apiclient
+from dashboard import CONFIG_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -13,10 +13,12 @@ _all_projects = None  # acts as a singleton because we only load it once (after 
 
 
 def _path_to_config_file() -> str:
-    return os.path.join(CONFIG_DIR, 'projects.json')
+    return os.path.join(CONFIG_DIR, "projects.json")
 
 
-def load_project_list(force_reload: bool = False, download_if_missing: bool = False) -> List[Dict]:
+def load_project_list(
+    force_reload: bool = False, download_if_missing: bool = False
+) -> List[Dict]:
     """
     Treats config like a singleton that is lazy-loaded once the first time this is called.
     :param force_reload: Override the default behaviour and load the config from file system again.
@@ -28,14 +30,22 @@ def load_project_list(force_reload: bool = False, download_if_missing: bool = Fa
         return _all_projects
     try:
         file_exists = os.path.exists(_path_to_config_file())
-        if force_reload or (download_if_missing and not file_exists):  # grab the latest config file from main server
+        if force_reload or (
+            download_if_missing and not file_exists
+        ):  # grab the latest config file from main server
             projects_list = apiclient.get_projects_list()
-            with open(_path_to_config_file(), 'w') as f:
+            with open(_path_to_config_file(), "w") as f:
                 json.dump(projects_list, f)
-                file_exists = True # we might have just created it for the first time
-            logger.info("  updated config file from main server - {} projects".format(len(projects_list)))
+                file_exists = True  # we might have just created it for the first time
+            logger.info(
+                "  updated config file from main server - {} projects".format(
+                    len(projects_list)
+                )
+            )
             if len(projects_list) == 0:
-                raise RuntimeError("Fetched empty project list was empty - bailing unhappily")
+                raise RuntimeError(
+                    "Fetched empty project list was empty - bailing unhappily"
+                )
         # load and return the (perhaps updated) locally cached file
         if file_exists:
             with open(_path_to_config_file(), "r") as f:
