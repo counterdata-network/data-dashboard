@@ -7,9 +7,8 @@ import dashboard.projects as projects
 from dashboard import sh_functions as helper
 
 
-def display_projects(selected_project_id):
     # Projects
-    st.title("Projects")
+st.title("Projects")
 list_of_projects = projects.load_project_list(
     force_reload=True, download_if_missing=True
 )
@@ -41,11 +40,11 @@ if option != "":
     posted_above_story_count = processor_db.posted_above_story_count(selected["id"])
     below_story_count = processor_db.below_story_count(selected["id"])
     try:
-        above_threshold_pct = (
+        above_threshold_pct = round((
             100
             * (unposted_above_story_count + posted_above_story_count)
             / below_story_count
-        )
+        ),2)
     except ZeroDivisionError:
         above_threshold_pct = 100
 
@@ -61,7 +60,7 @@ if option != "":
     )
     st.caption("Statistics")
     col1, col2 = st.columns(2)
-    col1.metric("Average Above Threshold Percentage", above_threshold_pct)
+    col1.metric("Average Above Threshold Percentage", f"{above_threshold_pct}%")
     col2.metric("Unposted Above Threshold Stories", unposted_above_story_count)
     col3, col4 = st.columns(2)
     col3.metric("Posted Above Threshold Stories", posted_above_story_count)
@@ -112,3 +111,4 @@ if option != "":
     email_alerts_discovery_chart = alerts.email_alerts_stories_by_date_column('created_at')
     # Visualize the chart using Altair or other plotting libraries
     st.write(email_alerts_discovery_chart)
+    
