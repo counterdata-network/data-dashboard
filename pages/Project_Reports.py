@@ -28,10 +28,8 @@ if option != "":
         unsafe_allow_html=True,
     )
     # Project Attributes
-    st.caption("Project Attributes")
-    col1, col2, col3 = st.columns(3)
-    col1.metric("ID", str(selected["id"]))
-    st.markdown("Title : " + str(selected["title"]))
+    st.caption("Project Background")
+    st.markdown(f"{selected['id']} - {selected['title']}")
     st.markdown("Model : " + str(selected["language_model"]))
     st.divider()
 
