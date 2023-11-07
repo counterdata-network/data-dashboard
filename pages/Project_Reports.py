@@ -2,21 +2,29 @@
 import streamlit as st
 
 import dashboard.database.alerts_db as alerts
-import dashboard.database.processor_db as processor_db  # noqa: E402
+import dashboard.database.processor_db as processor_db
 import dashboard.projects as projects
 from dashboard import sh_functions as helper
-
 
     # Projects
 st.title("Projects")
 list_of_projects = projects.load_project_list(
     force_reload=True, download_if_missing=True
 )
-titles = [""] + [p["title"] for p in list_of_projects]
-option = st.selectbox("Select project", (titles))
 
-if option != "":
-    selected = [p for p in list_of_projects if p["title"] == option][0]
+# Sort the list of projects by ID DESC
+sorted_list_of_projects = sorted(list_of_projects, key=lambda project: project["id"], reverse=True)
+
+# Create a list of strings with the project ID and title
+titles = ["0 - Select a project"] + [f"{project['id']} - {project['title']}" for project in sorted_list_of_projects]
+
+# Display the selectbox with the updated titles
+option = st.selectbox("Select Project by ID", (titles))
+
+# Get the selected project ID
+if option != "0 - Select a project":
+    selected_project_id = int(option.split(' - ')[0])
+    selected = [p for p in sorted_list_of_projects if p["id"] == selected_project_id][0]
     st.markdown(
         """
     <style>
