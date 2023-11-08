@@ -6,24 +6,28 @@ import dashboard.database.processor_db as processor_db
 import dashboard.projects as projects
 from dashboard import sh_functions as helper
 
-    # Projects
+# Projects
 st.title("Projects")
 list_of_projects = projects.load_project_list(
     force_reload=True, download_if_missing=True
 )
 
 # Sort the list of projects by ID DESC
-sorted_list_of_projects = sorted(list_of_projects, key=lambda project: project["id"], reverse=True)
+sorted_list_of_projects = sorted(
+    list_of_projects, key=lambda project: project["id"], reverse=True
+)
 
 # Create a list of strings with the project ID and title
-titles = ["0 - Select a project"] + [f"{project['id']} - {project['title']}" for project in sorted_list_of_projects]
+titles = ["Click Here to Get A Project's Report"] + [
+    f"{project['id']} - {project['title']}" for project in sorted_list_of_projects
+]
 
 # Display the selectbox with the updated titles
 option = st.selectbox("Select Project by ID", (titles))
 
 # Get the selected project ID
-if option != "0 - Select a project":
-    selected_project_id = int(option.split(' - ')[0])
+if option != "Click Here to Get A Project's Report":
+    selected_project_id = int(option.split(" - ")[0])
     selected = [p for p in sorted_list_of_projects if p["id"] == selected_project_id][0]
     st.markdown(
         """
@@ -46,11 +50,14 @@ if option != "0 - Select a project":
     posted_above_story_count = processor_db.posted_above_story_count(selected["id"])
     below_story_count = processor_db.below_story_count(selected["id"])
     try:
-        above_threshold_pct = round((
-            100
-            * (unposted_above_story_count + posted_above_story_count)
-            / below_story_count
-        ),2)
+        above_threshold_pct = round(
+            (
+                100
+                * (unposted_above_story_count + posted_above_story_count)
+                / below_story_count
+            ),
+            2,
+        )
     except ZeroDivisionError:
         above_threshold_pct = 100
 
@@ -64,7 +71,7 @@ if option != "0 - Select a project":
     """,
         unsafe_allow_html=True,
     )
-    st.caption("Statistics")
+    st.caption("Project Specific Story Statistics")
     col1, col2 = st.columns(2)
     col1.metric("Average Above Threshold Percentage", f"{above_threshold_pct}%")
     col2.metric("Unposted Above Threshold Stories", unposted_above_story_count)
@@ -75,6 +82,10 @@ if option != "0 - Select a project":
 
     # Model Scores
     st.subheader("Model Scores")
+    st.caption(
+        "Model Scores for the Stories that went through the Classifiers, Scores closer"
+        " to 1.0 Indicates the Amount of Stories by Significance"
+    )
     helper.draw_model_scores(project_id=selected["id"])
     st.divider()
 
@@ -108,13 +119,16 @@ if option != "0 - Select a project":
 
     # Email-Alerts Story volume by publication date
     st.subheader("Story Volume by Publication Date (Email-Alerts Database)")
-    email_alerts_publication_chart = alerts.email_alerts_stories_by_date_column('publish_date')
+    email_alerts_publication_chart = alerts.email_alerts_stories_by_date_column(
+        "publish_date"
+    )
     # Visualize the chart using Altair or other plotting libraries
     st.write(email_alerts_publication_chart)
 
     # Email-Alerts Story volume by discovery/creation date
     st.subheader("Story Volume by Discovery/Creation Date (Email-Alerts Database)")
-    email_alerts_discovery_chart = alerts.email_alerts_stories_by_date_column('created_at')
+    email_alerts_discovery_chart = alerts.email_alerts_stories_by_date_column(
+        "created_at"
+    )
     # Visualize the chart using Altair or other plotting libraries
     st.write(email_alerts_discovery_chart)
-    

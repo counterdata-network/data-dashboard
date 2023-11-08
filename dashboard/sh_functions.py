@@ -21,7 +21,9 @@ def draw_graph(func, project_id=None, above_threshold=None):
     df_list = []
     for p in PLATFORMS:
         # Pass the above_threshold parameter to the processor_db function
-        results = func(project_id=project_id, platform=p, above_threshold=above_threshold)
+        results = func(
+            project_id=project_id, platform=p, above_threshold=above_threshold
+        )
         df = pd.DataFrame(results)
         df["platform"] = p
         df_list.append(df)
@@ -42,15 +44,25 @@ def draw_graph(func, project_id=None, above_threshold=None):
 
 
 def draw_model_scores(project_id):
-    scores = [
+    Scores = [
         entry.values() for entry in processor_db.project_binned_model_scores(project_id)
     ]
-    chart = pd.DataFrame(scores, columns=["scores", "number of projects"])
-    chart["scores"] *= 10
+    chart = pd.DataFrame(Scores, columns=["Scores", "Number of Stories"])
+
+    # Convert 'scores' column to string type
+    chart["Scores"] = chart["Scores"].astype(str)
+
+    # Sort the 'scores' column in descending order
+    chart = chart.sort_values("Scores", ascending=False)
+
     bar_chart = (
         altair.Chart(chart)
         .mark_bar()
-        .encode(x=altair.X("scores"), y="number of projects", size=altair.SizeValue(35))
+        .encode(
+            x=altair.X("Scores", sort=None, axis=altair.Axis(labelAngle=0)),
+            y="Number of Stories",
+            size=altair.SizeValue(35),
+        )
     )
     st.altair_chart(bar_chart, use_container_width=True)
     return
@@ -65,9 +77,9 @@ def story_results_graph(project_id=None):
     )
     df_list = []
     a = pd.DataFrame(a)
-    a["Threshold"] = "above"
+    a["Threshold"] = "Above"
     b = pd.DataFrame(b)
-    b["Threshold"] = "below"
+    b["Threshold"] = "Below"
     df_list.append(a)
     df_list.append(b)
     chart = pd.concat(df_list)
