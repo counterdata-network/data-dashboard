@@ -34,29 +34,65 @@ def _run_count_query(query: str) -> int:
     data = _run_query(query)
     return data[0]["count"]
 
-def total_story_count() -> int:
-    query = "SELECT COUNT(1) FROM articles"
-    return _run_query(query)
+# In alerts_db.py
+def total_story_count(project_id: int = None) -> int:
+    if project_id is not None:
+        query = f"SELECT COUNT(1) FROM articles WHERE project_id = {project_id}"
+    else:
+        query = "SELECT COUNT(1) FROM articles"
+    result = _run_query(query)
+    return result[0]["count"] if result else 0
 
-def top_media_sources_by_story_volume(limit: int = 10) -> List:
+
+
+def top_media_sources_by_story_volume_22(project_id:int = None ,limit: int = 10) -> List:
     query = """
         SELECT media_name, COUNT(1) AS story_count
         FROM articles
+        WHERE project_id = {}
         GROUP BY media_name
         ORDER BY story_count DESC
         LIMIT {}
-    """.format(limit)
+    """.format(project_id, limit)
     return _run_query(query)
 
-def email_alerts_stories_by_date_column(
-    column_name: str, limit: int = 30
+
+
+def _alerts_by_date_col(
+    column_name: str,
+    project_id: int = None,
+    limit: int = None,
 ) -> List:
     earliest_date = dt.date.today() - dt.timedelta(days=limit)
-    query = """
-        SELECT {}::date AS day, COUNT(1) AS stories
-        FROM articles
-        WHERE {} IS NOT NULL AND {} >= '{}'::DATE
-        GROUP BY 1
-        ORDER BY 1 DESC
-    """.format(column_name, column_name, column_name, earliest_date)
+    clauses = []
+    if project_id is not None:
+        clauses.append("(project_id={})".format(project_id))
+    query = (
+        "select " + column_name + "::date as day, count(1) as stories from Articles "
+        "where ("
+        + column_name
+        + " is not Null) and ("
+        + column_name
+        + " >= '{}'::DATE) AND {} "
+        "group by 1 order by 1 DESC".format(earliest_date, " AND ".join(clauses))
+    )
     return _run_query(query)
+
+
+def stories_by_publish_date(
+    project_id: str = None,
+    
+    limit: int = 85,
+) -> List:
+    return _alerts_by_date_col(
+        "publish_date", project_id, limit
+    )
+    
+def stories_by_creation_date(
+    project_id: str = None,
+    
+    limit: int = 85,
+) -> List:
+    return _alerts_by_date_col(
+        "created_at", project_id, limit
+    )
