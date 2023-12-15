@@ -30,12 +30,8 @@ def _run_query(query: str) -> List[Dict]:
 def recent_stories(project_id: int, above_threshold: bool, limit: int = 5) -> List:
     """
     UI: show a list of the most recent stories we have processed
-    :param project_id:
-    :param above_threshold:
-    :param limit:
-    :return:
     """
-    earliest_date = dt.date.today() - dt.timedelta(days=7)
+    earliest_date = dt.date.today() - dt.timedelta(days=80)
     sql = """
         SELECT * FROM stories WHERE
             project_id={} AND above_threshold={} AND published_date >= '{}'::DATE
@@ -52,7 +48,7 @@ def _stories_by_date_col(
     platform: str = None,
     above_threshold: bool = None,
     is_posted: bool = None,
-    limit: int = 30,
+    limit: int = None,
 ) -> List:
     earliest_date = dt.date.today() - dt.timedelta(days=limit)
     clauses = []
@@ -83,10 +79,10 @@ def stories_by_posted_day(
     platform: str = None,
     above_threshold: bool = None,
     is_posted: bool = None,
-    limit: int = 45,
+    limit: int = 85,
 ) -> List:
     return _stories_by_date_col(
-        "processed_date", project_id, platform, above_threshold, is_posted, limit
+        "posted_date", project_id, platform, above_threshold, is_posted, limit
     )
 
 
@@ -95,7 +91,7 @@ def stories_by_processed_day(
     platform: str = None,
     above_threshold: bool = None,
     is_posted: bool = None,
-    limit: int = 45,
+    limit: int = 85,
 ) -> List:
     return _stories_by_date_col(
         "processed_date", project_id, platform, above_threshold, is_posted, limit
@@ -107,7 +103,7 @@ def stories_by_published_day(
     platform: str = None,
     above_threshold: bool = None,
     is_posted: bool = None,
-    limit: int = 30,
+    limit: int = 85,
 ) -> List:
     return _stories_by_date_col(
         "published_date", project_id, platform, above_threshold, is_posted, limit
@@ -121,9 +117,9 @@ def _run_count_query(query: str) -> int:
 
 def unposted_above_story_count(project_id: int, limit: int = None) -> int:
     """
-    UI: How many stories about threshold have *not* been sent to main server (should be zero!).
+    UI: How many stories about threshold have *not* been sent to the main server (should be zero!).
     """
-    date_clause = "(posted_date is not Null)"
+    date_clause = "(posted_date is Null)"
     if limit:
         earliest_date = dt.date.today() - dt.timedelta(days=limit)
         date_clause += " AND (posted_date >= '{}'::DATE)".format(earliest_date)
