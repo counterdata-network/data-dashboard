@@ -83,7 +83,7 @@ def stories_by_posted_day(
     limit: int = 85,
 ) -> List:
     return _stories_by_date_col(
-        "processed_date", project_id, platform, above_threshold, is_posted, limit
+        "posted_date", project_id, platform, above_threshold, is_posted, limit
     )
 
 
