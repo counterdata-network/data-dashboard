@@ -20,8 +20,6 @@ db_conn = init_connection()
 
 
 @st.cache_data(ttl=6 * 60 * 60)  # so we cache data for a while
-
-
 def _run_query(query: str) -> List[Dict]:
     dict_cursor = db_conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     dict_cursor.execute(query)
@@ -29,10 +27,10 @@ def _run_query(query: str) -> List[Dict]:
     return results
 
 
-
 def _run_count_query(query: str) -> int:
     data = _run_query(query)
     return data[0]["count"]
+
 
 # In alerts_db.py
 def total_story_count(project_id: int = None) -> int:
@@ -44,8 +42,9 @@ def total_story_count(project_id: int = None) -> int:
     return result[0]["count"] if result else 0
 
 
-
-def top_media_sources_by_story_volume_22(project_id:int = None ,limit: int = 10) -> List:
+def top_media_sources_by_story_volume_22(
+    project_id: int = None, limit: int = 10
+) -> List:
     query = """
         SELECT media_name, COUNT(1) AS story_count
         FROM articles
@@ -53,9 +52,10 @@ def top_media_sources_by_story_volume_22(project_id:int = None ,limit: int = 10)
         GROUP BY media_name
         ORDER BY story_count DESC
         LIMIT {}
-    """.format(project_id, limit)
+    """.format(
+        project_id, limit
+    )
     return _run_query(query)
-
 
 
 def _alerts_by_date_col(
@@ -81,18 +81,13 @@ def _alerts_by_date_col(
 
 def stories_by_publish_date(
     project_id: str = None,
-    
-    limit: int = 85,
+    limit: int = 45,
 ) -> List:
-    return _alerts_by_date_col(
-        "publish_date", project_id, limit
-    )
-    
+    return _alerts_by_date_col("publish_date", project_id, limit)
+
+
 def stories_by_creation_date(
     project_id: str = None,
-    
-    limit: int = 85,
+    limit: int = 45,
 ) -> List:
-    return _alerts_by_date_col(
-        "created_at", project_id, limit
-    )
+    return _alerts_by_date_col("created_at", project_id, limit)

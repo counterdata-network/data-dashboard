@@ -1,4 +1,3 @@
-# dashboard/database/processor_db.py
 import datetime as dt
 import logging
 from typing import Dict, List
@@ -128,7 +127,6 @@ def unposted_above_story_count(project_id: int, limit: int = None) -> int:
         project_id, date_clause
     )
     return _run_count_query(query)
-
 
 
 def posted_above_story_count(project_id: int) -> int:

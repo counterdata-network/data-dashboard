@@ -1,12 +1,9 @@
-# pages/project_Reports.py
-# Create a DataFrame from the list of dictionaries
-import pandas as pd
 import streamlit as st
 
 import dashboard.database.alerts_db as alerts
 import dashboard.database.processor_db as processor_db
 import dashboard.projects as projects
-from dashboard import sh_functions as helper
+from dashboard import graph_functions as helper
 
 # Projects
 st.sidebar.title("Projects")
@@ -78,7 +75,7 @@ if option != "Click Here to Get A Project's Report":
     st.divider()
 
     st.subheader("Above Threshold Stories by Project")
-    # by posted day
+    # project specific stories by posted day
     st.caption("Stories sent to the email alerts server based on the day they were run against the classifiers, "
            "grouped by the data source they originally came from.")
     helper.draw_graph(processor_db.stories_by_posted_day, selected["id"])
@@ -113,16 +110,13 @@ if option != "Click Here to Get A Project's Report":
     # Total story count in Email-Alerts for the selected project
     total_email_alerts_story_count = alerts.total_story_count(project_id=selected_project_id)
 
-    # Use st.metric instead of st.write to display the count more prominently
     st.metric(label=f"Total Stories in Email-Alerts for Project {selected_project_id} - {selected['title']}", value=total_email_alerts_story_count)
 
     #top media sources 
     st.subheader("Top 10 media sources by story count")
     helper.draw_bar_chart_sources(alerts.top_media_sources_by_story_volume_22, project_id=selected["id"])
     st.divider()
-        # In your main code
-# ...
-
+        
     # Story Count by Publication Date
     st.subheader("Story Count by Publication Date")
     helper.alerts_draw_graph(alerts.stories_by_publish_date, project_id=selected["id"])
