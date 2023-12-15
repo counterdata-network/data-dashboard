@@ -1,4 +1,3 @@
-# utils/shared_functions.py
 import altair as altair
 import pandas as pd
 import streamlit as st
@@ -49,7 +48,7 @@ def alerts_draw_graph(func, project_id=None):
     df = pd.DataFrame(results)
     df_list.append(df)
 
-    chart_data = df.groupby('day')['stories'].sum().reset_index()
+    chart_data = df.groupby("day")["stories"].sum().reset_index()
 
     bar_chart = (
         altair.Chart(chart_data)
@@ -78,7 +77,9 @@ def draw_bar_chart_sources(func, project_id=None, limit=10):
         .encode(
             x=altair.X("story_count:Q", title="Story Count"),
             y=altair.Y("media_name:N", title="Media Source"),
-            color=altair.Color("media_name:N", scale=altair.Scale(scheme="category20b")),
+            color=altair.Color(
+                "media_name:N", scale=altair.Scale(scheme="category20b")
+            ),
             tooltip=["media_name:N", "story_count:Q"],
         )
         .properties(width=600)
@@ -87,7 +88,6 @@ def draw_bar_chart_sources(func, project_id=None, limit=10):
 
     st.altair_chart(bar_chart, use_container_width=True)
     return
-
 
 
 def draw_model_scores(project_id):
@@ -145,41 +145,52 @@ def story_results_graph(project_id=None):
 
 
 def clean_title(title):
-    cleaned_title = ' '.join(word.capitalize() for word in title.replace('-', ' ').replace('_', ' ').split())
+    cleaned_title = " ".join(
+        word.capitalize() for word in title.replace("-", " ").replace("_", " ").split()
+    )
     return cleaned_title
 
+
 def extract_story_title(url):
-    
-    parts = url.split('/')
-   
+    parts = url.split("/")
+
     if len(parts[-1]) > 0:
         return clean_title(parts[-1])
     else:
-        
         return clean_title(parts[-2])
+
 
 def latest_stories(stories):
     data = []
     for s in stories:
-        data.append({
-            'ID': s.get('stories_id', ''),
-            'Source': s.get('source', ''),
-            'Published Date': str(s.get('published_date', '')),
-            'URL': f"{s.get('url', '')}",   
-            'Model Score': s.get('model_score', '')
-        })
+        data.append(
+            {
+                "ID": s.get("stories_id", ""),
+                "Source": s.get("source", ""),
+                "Published Date": str(s.get("published_date", "")),
+                "URL": f"{s.get('url', '')}",
+                "Model Score": s.get("model_score", ""),
+            }
+        )
 
     # Create a DataFrame with clickable URLs & Separate titles
     df = pd.DataFrame(data)
-    df['Story Headline'] = df['URL'].apply(extract_story_title)  
+    df["Story Headline"] = df["URL"].apply(extract_story_title)
 
-    
-    column_order = ['ID', 'Story Headline', 'Model Score', 'URL', 'Source', 'Published Date']
+    column_order = [
+        "ID",
+        "Story Headline",
+        "Model Score",
+        "URL",
+        "Source",
+        "Published Date",
+    ]
 
-    
     st.dataframe(
         df[column_order],
-        column_config={'URL': st.column_config.LinkColumn("URL - Double-Click to open")},
+        column_config={
+            "URL": st.column_config.LinkColumn("URL - Double-Click to open")
+        },
         hide_index=True,
-        use_container_width=True
+        use_container_width=True,
     )
