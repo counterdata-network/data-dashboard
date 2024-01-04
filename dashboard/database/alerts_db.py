@@ -19,7 +19,7 @@ def init_connection():
 db_conn = init_connection()
 
 
-@st.cache_data(ttl=6 * 60 * 60)  # so we cache data for a while
+@st.cache_data(ttl=1 * 60 * 60)  # so we cache data for a while
 def _run_query(query: str) -> List[Dict]:
     dict_cursor = db_conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     dict_cursor.execute(query)
