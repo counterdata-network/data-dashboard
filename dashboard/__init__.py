@@ -6,7 +6,7 @@ import sentry_sdk
 from dotenv import load_dotenv
 from sentry_sdk.integrations.tornado import TornadoIntegration
 
-VERSION = "0.1.2"
+VERSION = "0.1.3"
 # SOURCE_GOOGLE_ALERTS = "google-alerts"
 SOURCE_MEDIA_CLOUD = "media-cloud"
 SOURCE_NEWSCATCHER = "newscatcher"

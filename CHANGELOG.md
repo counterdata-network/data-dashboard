@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+### v0.1.3
+
+* Better handling of cases where no stories yet 
+
 ### v0.1.2
 
 * Fix deploy procfile to run correct entrypoint
