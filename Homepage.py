@@ -15,27 +15,43 @@ st.divider()
 
 st.subheader("Stories Sent to Main Server")
 # By posted day
-st.caption(
+st.write(
     "Stories sent to the email alerts server based on the day they were run against the classifiers, "
     "grouped by the data source they originally came from."
 )
-helper.draw_graph(processor_db.stories_by_posted_day, above_threshold=True)
+try:
+    helper.draw_graph(processor_db.stories_by_posted_day, above_threshold=True)
+except ValueError:  # prob no stories to show here
+    st.write("_Error creating chart. Perhaps no stories to show here?_")
+
 st.divider()
 # History (by discovery date)
 st.subheader("More History")
-st.caption(
+st.write(
     "Stories discovered on each platform based on the guessed date of publication, grouped by the "
     "data source they originally came from."
 )
-helper.draw_graph(processor_db.stories_by_published_day)
-st.caption(
+try:
+    helper.draw_graph(processor_db.stories_by_published_day)
+except ValueError:  # prob no stories to show here
+    st.write("_Error creating chart. Perhaps no stories to show here?_")
+
+st.write(
     "Stories based on the date they were run against the classifiers, grouped by the data source"
     "they originally came from."
 )
-helper.draw_graph(processor_db.stories_by_processed_day)
-st.caption(
+try:
+    helper.draw_graph(processor_db.stories_by_processed_day)
+except ValueError:  # prob no stories to show here
+    st.write("_Error creating chart. Perhaps no stories to show here?_")
+
+st.write(
     "Stories based on the date they were run against the classifiers, grouped by whether they were above"
     "threshold for their associated project or not."
 )
-helper.story_results_graph()
+try:
+    helper.story_results_graph()
+except ValueError:  # prob no stories to show here
+    st.write("_Error creating chart. Perhaps no stories to show here?_")
+
 st.divider()
