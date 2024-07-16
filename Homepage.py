@@ -1,5 +1,6 @@
 import streamlit as st
 import hmac
+import os
 
 st.set_page_config(layout="wide")
 
@@ -8,7 +9,8 @@ def check_password():
 
     def password_entered():
         """Checks whether a password entered by the user is correct."""
-        if hmac.compare_digest(st.session_state["password"], st.secrets["password"]):
+        password = os.getenv("STREAMLIT_PASSWORD", "")
+        if hmac.compare_digest(st.session_state["password"], password):
             st.session_state["password_correct"] = True
             del st.session_state["password"]  # Don't store the password.
         else:
