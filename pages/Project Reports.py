@@ -40,8 +40,14 @@ if option != "Click Here to Get A Project's Report":
         * Media Cloud Collections: {selected['media_collections']}
         * Query :` {selected['search_terms']}`
     """)
+    # Download Project Data feature
     st.divider()
+    st.write("Download the Project Data")
+    # Button to download CSV
+    if st.button("Download Project Data as CSV"):
+        processor_db.download_csv(selected["id"])
 
+    st.divider()
     # Project Statistics
     unposted_above_story_count = processor_db.unposted_above_story_count(selected["id"])
     posted_above_story_count = processor_db.posted_above_story_count(selected["id"])
@@ -61,6 +67,7 @@ if option != "Click Here to Get A Project's Report":
 
     # Project Statistics
     st.write("Project Specific Story Statistics")
+
 
     # Display metrics
     col1, col2 = st.columns(2)
