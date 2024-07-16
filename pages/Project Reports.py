@@ -1,10 +1,13 @@
 import streamlit as st
 
+from authentication import check_password
 import dashboard.database.alerts_db as alerts
 import dashboard.database.processor_db as processor_db
 import dashboard.projects as projects
 from dashboard import graph_functions as helper
 
+if not check_password():
+    st.stop()
 # Projects
 st.sidebar.title("Projects")
 list_of_projects = projects.load_project_list(
