@@ -1,9 +1,7 @@
 import datetime as dt
 import logging
 from typing import Dict, List
-import csv
-import base64
-from io import StringIO
+
 
 import psycopg2
 import psycopg2.extras
@@ -132,25 +130,6 @@ def fetch_stories_by_project_id(project_id: int) -> List[Dict]:
     db_conn.close()
 
     return results
-
-
-# Function to download CSV file
-def download_csv(project_id: int):
-    stories_data = fetch_stories_by_project_id(project_id)
-
-    if stories_data:
-        # Convert data to CSV format
-        csv_str = StringIO()
-        csv_writer = csv.DictWriter(csv_str, fieldnames=stories_data[0].keys())
-        csv_writer.writeheader()
-        csv_writer.writerows(stories_data)
-
-        # Generate download link
-        b64 = base64.b64encode(csv_str.getvalue().encode()).decode()
-        href = f'<a href="data:file/csv;base64,{b64}" download="project{project_id}_data.csv">Download CSV File</a>'
-        st.markdown(href, unsafe_allow_html=True)
-    else:
-        st.warning("No data found for the project ID.")
 
 
 def _run_count_query(query: str) -> int:

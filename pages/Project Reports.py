@@ -1,4 +1,7 @@
 import streamlit as st
+import csv
+import base64
+from io import StringIO
 
 import dashboard.database.alerts_db as alerts
 import dashboard.database.processor_db as processor_db
@@ -42,10 +45,29 @@ if option != "Click Here to Get A Project's Report":
     """)
     # Download Project Data feature
     st.divider()
-    st.write("Download the Project Data")
+
+    # Function to download CSV file
+    def download_csv(project_id: int):
+
+        stories_data = processor_db.fetch_stories_by_project_id(project_id)
+
+        if stories_data:
+            # Convert data to CSV format
+            csv_str = StringIO()
+            csv_writer = csv.DictWriter(csv_str, fieldnames=stories_data[0].keys())
+            csv_writer.writeheader()
+            csv_writer.writerows(stories_data)
+
+            # Generate download link
+            b64 = base64.b64encode(csv_str.getvalue().encode()).decode()
+            href = f'<a href="data:file/csv;base64,{b64}" download="project{project_id}_data.csv">Download CSV File</a>'
+            st.markdown(href, unsafe_allow_html=True)
+        else:
+            st.warning("No data found for the project ID.")
+
     # Button to download CSV
-    if st.button("Download Project Data as CSV"):
-        processor_db.download_csv(selected["id"])
+    if st.button("Download Recently Processed Stories"):
+        download_csv(selected["id"])
 
     st.divider()
     # Project Statistics
@@ -64,10 +86,8 @@ if option != "Click Here to Get A Project's Report":
     except ZeroDivisionError:
         above_threshold_pct = 100
 
-
     # Project Statistics
     st.write("Project Specific Story Statistics")
-
 
     # Display metrics
     col1, col2 = st.columns(2)
@@ -77,7 +97,6 @@ if option != "Click Here to Get A Project's Report":
     col3, col4 = st.columns(2)
     col3.metric("Above Threshold Stories Posted to Email Alerts Server", posted_above_story_count)
     col4.metric("Below Threshold Stories", below_story_count)
-
 
     # Model Scores
     st.subheader("Model Scores")
@@ -143,7 +162,7 @@ if option != "Click Here to Get A Project's Report":
 
     st.metric(label=f"Total Stories in Email-Alerts for Project {selected_project_id} - {selected['title']}", value=total_email_alerts_story_count)
 
-    #top media sources 
+    # top media sources
     st.subheader("Top 10 media sources by story count")
     try:
         helper.draw_bar_chart_sources(alerts.top_media_sources_by_story_volume_22, project_id=selected["id"])
@@ -158,7 +177,6 @@ if option != "Click Here to Get A Project's Report":
     except (ValueError, KeyError):  # prob no stories to show here
         st.write("_Error. Perhaps no stories to show here?_")
 
-    
     st.divider()
 
     # Story Count by Creation Date
@@ -169,5 +187,4 @@ if option != "Click Here to Get A Project's Report":
         st.write("_Error. Perhaps no stories to show here?_")
 
     st.divider()
-
 
