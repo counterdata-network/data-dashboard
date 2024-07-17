@@ -2,6 +2,7 @@ import datetime as dt
 import logging
 from typing import Dict, List
 
+
 import psycopg2
 import psycopg2.extras
 import streamlit as st
@@ -108,6 +109,27 @@ def stories_by_published_day(
     return _stories_by_date_col(
         "published_date", project_id, platform, above_threshold, is_posted, limit
     )
+
+
+@st.cache_data(ttl=12 * 60 * 60)  # Cache data for 12 hours
+def fetch_stories_by_project_id(project_id: int) -> List[Dict]:
+    """
+    Fetch all stories for a given project_id.
+    """
+    db_conn = init_connection()
+    dict_cursor = db_conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    query = """
+        SELECT * FROM stories
+        WHERE project_id={} 
+    """.format(project_id)
+
+    dict_cursor.execute(query)
+    results = dict_cursor.fetchall()
+    dict_cursor.close()
+    db_conn.close()
+
+    return results
 
 
 def _run_count_query(query: str) -> int:
