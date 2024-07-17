@@ -2,7 +2,6 @@ import streamlit as st
 import hmac
 import os
 
-st.set_page_config(layout="wide")
 
 def check_password():
     """Returns `True` if the user had the correct password."""
@@ -14,7 +13,6 @@ def check_password():
             del st.session_state["password"]  # Don't store the password.
         else:
             st.session_state["password_correct"] = False
-
 
     # Return True if the password is validated.
     if st.session_state.get("password_correct", False):

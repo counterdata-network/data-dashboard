@@ -1,6 +1,7 @@
 import streamlit as st
 from authentication import check_password
 
+st.set_page_config(layout="wide")
 
 if not check_password():
     st.stop()
