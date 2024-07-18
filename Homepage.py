@@ -1,7 +1,10 @@
 import streamlit as st
+from authentication import check_password
 
 st.set_page_config(layout="wide")
 
+if not check_password():
+    st.stop()
 
 import dashboard.database.processor_db as processor_db  # noqa: E402
 from dashboard import graph_functions as helper  # noqa: E402
