@@ -194,3 +194,32 @@ def latest_stories(stories):
         hide_index=True,
         use_container_width=True,
     )
+def latest_articles(articles):
+    data = []
+    for a in articles:
+        data.append({
+            "id": a.get("id", ""),
+            "title":  a.get("title", ""),
+            "source": a.get("source", ""),
+            "url": a.get("url", ""),
+            "publish_date": str(a.get("publish_date", "")),
+        })
+
+    df = pd.DataFrame(data)
+
+    # Reorder columns
+    column_order = ["id", "title", "source", "url", "publish_date"]
+    df = df[column_order]
+
+    # Create column configurations
+    column_config = {
+        "url": st.column_config.LinkColumn("URL - Double-Click to open")
+    }
+
+    # Display DataFrame with Streamlit
+    st.dataframe(
+        df,
+        column_config=column_config,
+        hide_index=True,
+        use_container_width=True
+    )

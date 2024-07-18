@@ -134,6 +134,13 @@ if option != "Click Here to Get A Project's Report":
     # Add a section for Email-Alerts database visualizations
     st.title("Email-Alerts Database")
 
+    st.subheader("Latest Stories in Email-Alerts")
+    try:
+        recent_articles = alerts.recent_articles(selected['id'])
+        helper.latest_articles(recent_articles)
+    except (ValueError, KeyError):  # prob no stories to show here
+        st.write("_Error. Perhaps no stories to show here?_")
+
     # Total story count in Email-Alerts for the selected project
     total_email_alerts_story_count = alerts.total_story_count(project_id=selected_project_id)
 

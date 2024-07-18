@@ -21,9 +21,15 @@ db_conn = init_connection()
 
 @st.cache_data(ttl=1 * 60 * 60)  # so we cache data for a while
 def _run_query(query: str) -> List[Dict]:
-    dict_cursor = db_conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    dict_cursor.execute(query)
-    results = dict_cursor.fetchall()
+    results = []
+    try:
+        with db_conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as dict_cursor:
+            dict_cursor.execute(query)
+            results = dict_cursor.fetchall()
+            db_conn.commit()
+    except Exception as e:
+        db_conn.rollback()
+        st.error(f"Error executing query: {e}")
     return results
 
 
@@ -91,3 +97,25 @@ def stories_by_creation_date(
     limit: int = 45,
 ) -> List:
     return _alerts_by_date_col("created_at", project_id, limit)
+
+def recent_articles(project_id: int, limit: int = 100) -> List:
+    """
+    UI: show a list of the most recent articles in email alerts for a specific project
+    """
+    query = """
+            SELECT 
+                id,
+                title,
+                source,
+                url,
+                publish_date
+            FROM 
+                articles
+            WHERE 
+                project_id = {project_id}
+                AND publish_date >= NOW() - INTERVAL '80 days'
+            ORDER BY 
+                publish_date DESC
+            LIMIT {limit};
+        """.format(project_id=project_id, limit=limit)
+    return _run_query(query)
