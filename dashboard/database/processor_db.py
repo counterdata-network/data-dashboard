@@ -2,8 +2,9 @@ import datetime as dt
 import logging
 from typing import Dict, List
 
-import psycopg2
-import psycopg2.extras
+
+import psycopg
+from psycopg.rows import dict_row
 import streamlit as st
 
 from dashboard import PROCESSOR_DB_URI
@@ -13,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 @st.cache_resource  # so it only run once
 def init_connection():
-    return psycopg2.connect(PROCESSOR_DB_URI)
+    return psycopg.connect(PROCESSOR_DB_URI, row_factory=dict_row)
 
 
 db_conn = init_connection()
@@ -21,7 +22,7 @@ db_conn = init_connection()
 
 @st.cache_data(ttl=6 * 60 * 60)  # so we cache data for a while
 def _run_query(query: str) -> List[Dict]:
-    dict_cursor = db_conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    dict_cursor = db_conn.cursor()
     dict_cursor.execute(query)
     results = dict_cursor.fetchall()
     return results
@@ -108,6 +109,27 @@ def stories_by_published_day(
     return _stories_by_date_col(
         "published_date", project_id, platform, above_threshold, is_posted, limit
     )
+
+
+@st.cache_data(ttl=12 * 60 * 60)  # Cache data for 12 hours
+def fetch_stories_by_project_id(project_id: int) -> List[Dict]:
+    """
+    Fetch all stories for a given project_id.
+    """
+    db_conn = init_connection()
+    dict_cursor = db_conn.cursor()
+
+    query = """
+        SELECT * FROM stories
+        WHERE project_id={} 
+    """.format(project_id)
+
+    dict_cursor.execute(query)
+    results = dict_cursor.fetchall()
+    dict_cursor.close()
+    db_conn.close()
+
+    return results
 
 
 def _run_count_query(query: str) -> int:
