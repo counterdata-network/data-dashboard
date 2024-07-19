@@ -12,6 +12,7 @@ from dashboard import graph_functions as helper
 
 # Supporting Functions
 def download_csv(project_id: int):
+    """Generates a CSV download link for the stories data associated with a given project ID."""
     stories_data = processor_db.fetch_stories_by_project_id(project_id)
     if stories_data:
         csv_str = StringIO()
