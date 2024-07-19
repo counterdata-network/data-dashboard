@@ -1,6 +1,15 @@
 Change Log
 ==========
 
+### v0.2.1
+
+* Fix database integration bugs
+
+### v0.2.0
+
+* Add password protection
+* Update depedencies to latest
+
 ### v0.1.3
 
 * Better handling of cases where no stories yet 

@@ -21,7 +21,7 @@ Releasing
 
 To build a release:
 
-1. Edit `processor.VERSION` based on semantic versioning norms
+1. Edit `dashboard.VERSION` based on semantic versioning norms
 2. Update the `CHANGELOG.md` file with a note about what changed
 3. Commit those changes and tag the repo with the version number from step 1
 
