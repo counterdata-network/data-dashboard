@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+### v0.2.1
+
+* Fix database integration bugs
+
 ### v0.2.0
 
 * Add password protection
