@@ -21,22 +21,11 @@ db_conn = init_connection()
 
 @st.cache_data(ttl=1 * 60 * 60)  # so we cache data for a while
 def _run_query(query: str) -> List[Dict]:
-<<<<<<< HEAD
-    results = []
-    try:
-        with db_conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as dict_cursor:
-            dict_cursor.execute(query)
-            results = dict_cursor.fetchall()
-            db_conn.commit()
-    except Exception as e:
-        db_conn.rollback()
-        st.error(f"Error executing query: {e}")
-=======
     dict_cursor = db_conn.cursor()
     dict_cursor.execute(query)
     results = dict_cursor.fetchall()
->>>>>>> origin/main
     return results
+
 
 
 def _run_count_query(query: str) -> int:
