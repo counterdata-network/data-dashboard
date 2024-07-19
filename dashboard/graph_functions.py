@@ -213,7 +213,7 @@ def latest_articles(articles):
 
     # Create column configurations
     column_config = {
-        "url": st.column_config.LinkColumn("URL - Double-Click to open")
+        "url": st.column_config.LinkColumn()
     }
 
     # Display DataFrame with Streamlit

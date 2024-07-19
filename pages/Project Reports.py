@@ -160,7 +160,7 @@ if option != "Click Here to Get A Project's Report":
     # Add a section for Email-Alerts database visualizations
     st.title("Email-Alerts Database")
 
-    st.subheader("Latest Stories in Email-Alerts")
+    st.subheader("Recent Above Threshold Stories (from Email-Alerts Database)")
     try:
         recent_articles = alerts.recent_articles(selected['id'])
         helper.latest_articles(recent_articles)

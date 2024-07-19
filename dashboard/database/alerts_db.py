@@ -108,7 +108,7 @@ def recent_articles(project_id: int, limit: int = 100) -> List:
                 articles
             WHERE 
                 project_id = {project_id}
-                AND publish_date >= NOW() - INTERVAL '80 days'
+                AND publish_date >= NOW() - INTERVAL '30 days'
             ORDER BY 
                 publish_date DESC
             LIMIT {limit};
