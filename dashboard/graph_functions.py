@@ -6,49 +6,26 @@ import dashboard.database.processor_db as processor_db
 from dashboard import PLATFORMS
 
 
-def complete_date_range(chart_data, date_col='day', value_col='stories'):
+def to_altair_datetime(dt):
+    """Convert a pandas datetime to an Altair datetime object.
+       Source: @jakevdp (https://github.com/vega/altair/issues/1005#issuecomment-403237407)
     """
-    Add a complete date range to the chart data.
-
-    Args:
-    - chart_data (pd.DataFrame): The original dataframe with date and value columns.
-    - date_col (str): The name of the date column, default is 'day'.
-    - value_col (str): The name of the value column, default is 'stories'.
-
-    Returns:
-    - pd.DataFrame: DataFrame with a complete date range and filled missing values.
-    """
-    # make sure the date column is in datetime format
-    chart_data[date_col] = pd.to_datetime(chart_data[date_col])
-
-    # get the earliest date from the results
-    start_date = chart_data[date_col].min()
-
-    # generate a complete date range from the earliest date to the current date for our chart
-    full_date_range = pd.date_range(start=start_date, end=pd.Timestamp.today())
-
-    # create a dataframe with this date range and merge with original
-    date_df = pd.DataFrame({date_col: full_date_range})
-    merged_df = date_df.merge(chart_data, on=date_col, how='left')
-
-    # fill NaN values with 0 for the value column
-    merged_df[value_col].fillna(0, inplace=True)
-
-    return merged_df
+    dt = pd.to_datetime(dt)
+    return altair.DateTime(year=dt.year, month=dt.month, date=dt.day,
+                           hours=dt.hour, minutes=dt.minute, seconds=dt.second,
+                           milliseconds=0.001 * dt.microsecond)
 
 
-def draw_graph(func, date_col='day', project_id=None, above_threshold=None):
+def draw_graph(func, project_id=None, above_threshold=None):
     """
     Draw a graph based on data returned by a provided function from processor_db.
 
     Parameters:
-        date_col(string, optional): The respective date column( default is 'day').
         project_id (int, optional): The project ID (default is None).
         above_threshold (bool, optional): Filter results for above-threshold stories (default is None).
     Returns:
         None
     """
-
     df_list = []
     for p in PLATFORMS:
         # Pass the above_threshold parameter to the processor_db function
@@ -59,22 +36,23 @@ def draw_graph(func, date_col='day', project_id=None, above_threshold=None):
         df["platform"] = p
         df_list.append(df)
 
+    # concatenate all the data into a single dataframe
     chart = pd.concat(df_list)
 
-    # complete the date range for the chart
-    merged_df = complete_date_range(chart)
-    merged_df['platform'].fillna('No Data', inplace=True)
+    # define date range domain
+    start_date = chart['day'].min()
+    end_date = pd.Timestamp.today()
+    domain = [to_altair_datetime(start_date), to_altair_datetime(end_date)]
 
     # create the bar chart
     bar_chart = (
-        altair.Chart(merged_df)
+        altair.Chart(chart)
         .mark_bar()
         .encode(
-            x=altair.X(date_col + ':T', axis=altair.Axis(format='%m-%d')),
-            y=altair.Y('stories:Q', axis=altair.Axis(title='Story Count')),
-            color=altair.Color('platform:N',
-                               scale=altair.Scale(domain=[p for p in PLATFORMS if p in merged_df['platform'].unique()]),
-                               legend=altair.Legend(title='Platform')),
+            x=altair.X('day:T', axis=altair.Axis(title="Date", format="%m-%d"),
+                       scale=altair.Scale(domain=domain)),
+            y=altair.Y('stories:Q', axis=altair.Axis(title="Story Count")),
+            color=altair.Color('platform:N', legend=altair.Legend(title='Platform')),
             size=altair.SizeValue(8)
         )
     )
@@ -93,16 +71,20 @@ def alerts_draw_graph(func, project_id=None):
     # convert to dataframe and group by day
     chart = df.groupby("day")["stories"].sum().reset_index()
 
-    merged_df = complete_date_range(chart)
+    # define date range domain
+    start_date = chart['day'].min()
+    end_date = pd.Timestamp.today()
+    domain = [to_altair_datetime(start_date), to_altair_datetime(end_date)]
 
     # create the bar chart
     bar_chart = (
-        altair.Chart(merged_df)
+        altair.Chart(chart)
         .mark_bar()
         .encode(
-            x=altair.X("day:T", axis=altair.Axis(title="Date", format="%m-%d")),
-            y=altair.Y("stories:Q", axis=altair.Axis(title="Story Count")),
-            size=altair.SizeValue(8),
+            x=altair.X('day:T', scale=altair.Scale(domain=domain),
+                       axis=altair.Axis(title="Date", format="%m-%d")),
+            y=altair.Y('stories:Q', axis=altair.Axis(title='Story Count')),
+            size=altair.SizeValue(8)
         )
     )
 
@@ -137,10 +119,10 @@ def draw_bar_chart_sources(func, project_id=None, limit=10):
 
 
 def draw_model_scores(project_id):
-    Scores = [
+    scores = [
         entry.values() for entry in processor_db.project_binned_model_scores(project_id)
     ]
-    chart = pd.DataFrame(Scores, columns=["Scores", "Number of Stories"])
+    chart = pd.DataFrame(scores, columns=["Scores", "Number of Stories"])
 
     # Convert 'scores' column to string type
     chart["Scores"] = chart["Scores"].astype(str)
@@ -161,7 +143,7 @@ def draw_model_scores(project_id):
     return
 
 
-def story_results_graph(project_id=None, date_col='day'):
+def story_results_graph(project_id=None):
     # Get data for above and below threshold
     a = processor_db.stories_by_processed_day(
         project_id=project_id, above_threshold=True
@@ -180,21 +162,20 @@ def story_results_graph(project_id=None, date_col='day'):
     df_list.append(b)
     chart = pd.concat(df_list)
 
-    merged_df = complete_date_range(chart)
-    merged_df['Threshold'].fillna('No Data', inplace=True)
+    # define date range domain
+    start_date = chart['day'].min()
+    end_date = pd.Timestamp.today()
+    domain = [to_altair_datetime(start_date), to_altair_datetime(end_date)]
 
-    # Define the color domain to exclude 'No Data'
-    color_domain = [t for t in merged_df['Threshold'].unique() if t != 'No Data']
-
-    # Create the bar chart, filtering out 'No Data' from the color encoding
+    # create the bar chart
     bar_chart = (
-        altair.Chart(merged_df)
+        altair.Chart(chart)
         .mark_bar()
         .encode(
-            x=altair.X(date_col + ':T', axis=altair.Axis(format='%m-%d')),
-            y=altair.Y('stories:Q', axis=altair.Axis(title='Story Count')),
-            color=altair.Color('Threshold:N', scale=altair.Scale(domain=color_domain),
-                               legend=altair.Legend(title='Threshold')),
+            x=altair.X('day:T', scale=altair.Scale(domain=domain),
+                       axis=altair.Axis(title="Date", format="%m-%d")),
+            y=altair.Y('stories:Q', axis=altair.Axis(title="Story Count")),
+            color=altair.Color('Threshold:N', legend=altair.Legend(title='Threshold')),
             size=altair.SizeValue(8)
         )
     )
