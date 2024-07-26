@@ -1,12 +1,13 @@
 import altair as altair
 import pandas as pd
 import streamlit as st
+from typing import List
 
 import dashboard.database.processor_db as processor_db
 from dashboard import PLATFORMS
 
 
-def to_altair_datetime(dt):
+def _to_altair_datetime(dt):
     """Convert a pandas datetime to an Altair datetime object.
        Source: @jakevdp (https://github.com/vega/altair/issues/1005#issuecomment-403237407)
     """
@@ -14,6 +15,15 @@ def to_altair_datetime(dt):
     return altair.DateTime(year=dt.year, month=dt.month, date=dt.day,
                            hours=dt.hour, minutes=dt.minute, seconds=dt.second,
                            milliseconds=0.001 * dt.microsecond)
+
+
+def _get_updated_domain(min_date: str) -> List[altair.DateTime]:
+    """
+    Generate time domain from min_date to current date. 
+    """
+    end_date = pd.Timestamp.today()
+    domain = [_to_altair_datetime(min_date), _to_altair_datetime(end_date)]
+    return domain
 
 
 def draw_graph(func, project_id=None, above_threshold=None):
@@ -36,13 +46,9 @@ def draw_graph(func, project_id=None, above_threshold=None):
         df["platform"] = p
         df_list.append(df)
 
-    # concatenate all the data into a single dataframe
+    # concatenate all the data into a single dataframe and update to desired domain
     chart = pd.concat(df_list)
-
-    # define date range domain
-    start_date = chart['day'].min()
-    end_date = pd.Timestamp.today()
-    domain = [to_altair_datetime(start_date), to_altair_datetime(end_date)]
+    domain = _get_updated_domain(chart['day'].min())
 
     # create the bar chart
     bar_chart = (
@@ -68,13 +74,9 @@ def alerts_draw_graph(func, project_id=None):
     df = pd.DataFrame(results)
     df_list.append(df)
 
-    # convert to dataframe and group by day
+    # concatenate all the data into a single dataframe and update to desired domain
     chart = df.groupby("day")["stories"].sum().reset_index()
-
-    # define date range domain
-    start_date = chart['day'].min()
-    end_date = pd.Timestamp.today()
-    domain = [to_altair_datetime(start_date), to_altair_datetime(end_date)]
+    domain = _get_updated_domain(chart['day'].min())
 
     # create the bar chart
     bar_chart = (
@@ -160,12 +162,10 @@ def story_results_graph(project_id=None):
     b["Threshold"] = "Below"
     df_list.append(a)
     df_list.append(b)
-    chart = pd.concat(df_list)
 
-    # define date range domain
-    start_date = chart['day'].min()
-    end_date = pd.Timestamp.today()
-    domain = [to_altair_datetime(start_date), to_altair_datetime(end_date)]
+    # concatenate all the data into a single dataframe and update to desired domain
+    chart = pd.concat(df_list)
+    domain = _get_updated_domain(chart['day'].min())
 
     # create the bar chart
     bar_chart = (
