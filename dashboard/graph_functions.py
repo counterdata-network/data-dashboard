@@ -7,14 +7,14 @@ import dashboard.database.processor_db as processor_db
 from dashboard import PLATFORMS
 
 
-def _to_altair_datetime(dt):
+def _to_altair_datetime(original_datetime):
     """Convert a pandas datetime to an Altair datetime object.
        Source: @jakevdp (https://github.com/vega/altair/issues/1005#issuecomment-403237407)
     """
-    dt = pd.to_datetime(dt)
-    return altair.DateTime(year=dt.year, month=dt.month, date=dt.day,
-                           hours=dt.hour, minutes=dt.minute, seconds=dt.second,
-                           milliseconds=0.001 * dt.microsecond)
+    python_datetime = pd.to_datetime(original_datetime)
+    return altair.DateTime(year=python_datetime.year, month=python_datetime.month, date=python_datetime.day,
+                           hours=python_datetime.hour, minutes=python_datetime.minute, seconds=python_datetime.second,
+                           milliseconds=0.001 * python_datetime.microsecond)
 
 
 def _get_updated_domain(min_date: str) -> List[altair.DateTime]:
@@ -46,17 +46,16 @@ def draw_graph(func, project_id=None, above_threshold=None):
         df["platform"] = p
         df_list.append(df)
 
-    # concatenate all the data into a single dataframe and update to desired domain
+    # concatenate all the data into a single dataframe
     chart = pd.concat(df_list)
-    domain = _get_updated_domain(chart['day'].min())
 
-    # create the bar chart
+    # Define the bar chart
     bar_chart = (
         altair.Chart(chart)
         .mark_bar()
         .encode(
             x=altair.X('day:T', axis=altair.Axis(title="Date", format="%m-%d"),
-                       scale=altair.Scale(domain=domain)),
+                    scale=altair.Scale(domain=_get_updated_domain(chart['day'].min()))),
             y=altair.Y('stories:Q', axis=altair.Axis(title="Story Count")),
             color=altair.Color('platform:N', legend=altair.Legend(title='Platform')),
             size=altair.SizeValue(8)
@@ -74,16 +73,15 @@ def alerts_draw_graph(func, project_id=None):
     df = pd.DataFrame(results)
     df_list.append(df)
 
-    # concatenate all the data into a single dataframe and update to desired domain
+    # concatenate all the data into a single dataframe
     chart = df.groupby("day")["stories"].sum().reset_index()
-    domain = _get_updated_domain(chart['day'].min())
 
     # create the bar chart
     bar_chart = (
         altair.Chart(chart)
         .mark_bar()
         .encode(
-            x=altair.X('day:T', scale=altair.Scale(domain=domain),
+            x=altair.X('day:T', scale=altair.Scale(domain=_get_updated_domain(chart['day'].min())),
                        axis=altair.Axis(title="Date", format="%m-%d")),
             y=altair.Y('stories:Q', axis=altair.Axis(title='Story Count')),
             size=altair.SizeValue(8)
@@ -165,14 +163,13 @@ def story_results_graph(project_id=None):
 
     # concatenate all the data into a single dataframe and update to desired domain
     chart = pd.concat(df_list)
-    domain = _get_updated_domain(chart['day'].min())
 
     # create the bar chart
     bar_chart = (
         altair.Chart(chart)
         .mark_bar()
         .encode(
-            x=altair.X('day:T', scale=altair.Scale(domain=domain),
+            x=altair.X('day:T', scale=altair.Scale(domain=_get_updated_domain(chart['day'].min())),
                        axis=altair.Axis(title="Date", format="%m-%d")),
             y=altair.Y('stories:Q', axis=altair.Axis(title="Story Count")),
             color=altair.Color('Threshold:N', legend=altair.Legend(title='Threshold')),
