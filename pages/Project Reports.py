@@ -68,6 +68,7 @@ if option != "Click Here to Get A Project's Report":
         else:
             st.warning("No data found for the project ID.")
 
+
     # Button to download CSV
     if st.button("Download Recently Processed Stories"):
         download_csv(selected["id"])
@@ -80,9 +81,9 @@ if option != "Click Here to Get A Project's Report":
     try:
         above_threshold_pct = round(
             (
-                100
-                * (unposted_above_story_count + posted_above_story_count)
-                / below_story_count
+                    100
+                    * (unposted_above_story_count + posted_above_story_count)
+                    / below_story_count
             ),
             2,
         )
@@ -113,27 +114,27 @@ if option != "Click Here to Get A Project's Report":
     st.subheader("Above Threshold Stories by Project")
     # project specific stories by posted day
     st.write("Stories sent to the email alerts server based on the **day they were run against the classifiers**, "
-           "grouped by the data source they originally came from.")
+             "grouped by the data source they originally came from.")
     try:
-        helper.draw_graph(processor_db.stories_by_posted_day, selected["id"])
+        helper.draw_graph(processor_db.stories_by_posted_day, project_id=selected["id"])
     except ValueError:  # prob no stories to show here
         st.write("_Error creating chart. Perhaps no stories to show here?_")
     st.divider()
     # History (by discovery date)
     st.subheader("History of the Project")
     st.write("Stories discovered on each platform based on the **guessed date of publication**, grouped by the "
-           "data source they originally came from.")
+             "data source they originally came from.")
     try:
-        helper.draw_graph(processor_db.stories_by_published_day, selected["id"])
+        helper.draw_graph(processor_db.stories_by_published_day, project_id=selected["id"])
     except ValueError:  # prob no stories to show here
         st.write("_Error creating chart. Perhaps no stories to show here?_")
     st.write("Stories grouped by Platforms based on **Discovery Day**")
     try:
-        helper.draw_graph(processor_db.stories_by_processed_day, selected["id"])
+        helper.draw_graph(processor_db.stories_by_processed_day, project_id=selected["id"])
     except ValueError:  # prob no stories to show here
         st.write("_Error creating chart. Perhaps no stories to show here?_")
     st.write("Stories based on the **date they were run against the classifiers**, grouped by whether they were above"
-           "threshold for their associated project or not.")
+             "threshold for their associated project or not.")
     try:
         helper.story_results_graph(selected["id"])
     except ValueError:  # prob no stories to show here
@@ -154,9 +155,9 @@ if option != "Click Here to Get A Project's Report":
         helper.latest_stories(stories_below)
     except (ValueError, KeyError):  # prob no stories to show here
         st.write("_Error. Perhaps no stories to show here?_")
-    
+
     st.divider()
-    
+
     # Add a section for Email-Alerts database visualizations
     st.title("Email-Alerts Database")
 
@@ -170,7 +171,8 @@ if option != "Click Here to Get A Project's Report":
     # Total story count in Email-Alerts for the selected project
     total_email_alerts_story_count = alerts.total_story_count(project_id=selected_project_id)
 
-    st.metric(label=f"Total Stories in Email-Alerts for Project {selected_project_id} - {selected['title']}", value=total_email_alerts_story_count)
+    st.metric(label=f"Total Stories in Email-Alerts for Project {selected_project_id} - {selected['title']}",
+              value=total_email_alerts_story_count)
 
     # top media sources
     st.subheader("Top 10 media sources by story count")
@@ -179,7 +181,7 @@ if option != "Click Here to Get A Project's Report":
     except (ValueError, KeyError):  # prob no stories to show here
         st.write("_Error. Perhaps no stories to show here?_")
     st.divider()
-        
+
     # Story Count by Publication Date
     st.subheader("Story Count by Publication Date")
     try:
@@ -197,4 +199,3 @@ if option != "Click Here to Get A Project's Report":
         st.write("_Error. Perhaps no stories to show here?_")
 
     st.divider()
-
