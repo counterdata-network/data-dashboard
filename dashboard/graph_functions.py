@@ -19,7 +19,7 @@ def _to_altair_datetime(dt):
 
 def _get_updated_domain(min_date: str) -> List[altair.DateTime]:
     """
-    Generate time domain from min_date to current date. 
+    Generate time domain from min_date to current date.
     """
     end_date = pd.Timestamp.today()
     domain = [_to_altair_datetime(min_date), _to_altair_datetime(end_date)]
