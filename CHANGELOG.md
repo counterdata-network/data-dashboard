@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+### v0.3.0
+
+* Add feature to show recent stories from email alerts database
+
 ### v0.2.1
 
 * Fix database integration bugs

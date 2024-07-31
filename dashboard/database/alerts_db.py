@@ -27,6 +27,7 @@ def _run_query(query: str) -> List[Dict]:
     return results
 
 
+
 def _run_count_query(query: str) -> int:
     data = _run_query(query)
     return data[0]["count"]
@@ -91,3 +92,25 @@ def stories_by_creation_date(
     limit: int = 45,
 ) -> List:
     return _alerts_by_date_col("created_at", project_id, limit)
+
+def recent_articles(project_id: int, limit: int = 100) -> List:
+    """
+    UI: show a list of the most recent articles in email alerts for a specific project
+    """
+    query = """
+            SELECT 
+                id,
+                title,
+                source,
+                url,
+                publish_date
+            FROM 
+                articles
+            WHERE 
+                project_id = {project_id}
+                AND publish_date >= NOW() - INTERVAL '30 days'
+            ORDER BY 
+                publish_date DESC
+            LIMIT {limit};
+        """.format(project_id=project_id, limit=limit)
+    return _run_query(query)

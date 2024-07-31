@@ -66,6 +66,7 @@ if option != "Click Here to Get A Project's Report":
     # Download Project Data
     st.divider()
 
+    # Button to download CSV
     if st.button("Download Recently Processed Stories"):
         download_csv(selected["id"])
 
@@ -77,9 +78,7 @@ if option != "Click Here to Get A Project's Report":
     below_story_count = processor_db.below_story_count(selected["id"])
     try:
         above_threshold_pct = round(
-            100 * (unposted_above_story_count + posted_above_story_count) / below_story_count,
-            2,
-        )
+            100 * ((unposted_above_story_count + posted_above_story_count) / below_story_count), 2)
     except ZeroDivisionError:
         above_threshold_pct = 100
 
@@ -157,6 +156,14 @@ if option != "Click Here to Get A Project's Report":
     # Section 4: Email-Alerts Database
     st.title("Email-Alerts Database")
 
+    # Recent Stories in Email-Alerts for Specified Project
+    st.subheader("Recent Above Threshold Stories (from Email-Alerts Database)")
+    try:
+        recent_articles = alerts.recent_articles(selected['id'])
+        helper.latest_articles(recent_articles)
+    except (ValueError, KeyError):  
+        st.write("_Error. Perhaps no stories to show here?_")
+
     # Total story count in Email-Alerts for Specified Project
     total_email_alerts_story_count = alerts.total_story_count(project_id=selected_project_id)
     st.metric(label=f"Total Stories in Email-Alerts for Project {selected_project_id} - {selected['title']}",
@@ -164,6 +171,7 @@ if option != "Click Here to Get A Project's Report":
 
     # Top Media Sources
     st.subheader("Top 10 Media Sources by Story Count")
+
     try:
         helper.draw_bar_chart_sources(alerts.top_media_sources_by_story_volume_22, project_id=selected["id"])
     except (ValueError, KeyError):
