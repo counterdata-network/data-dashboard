@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+### v0.3.1
+
+* Make sure all charts extend to today even they don't have any data for the last few days
+* General code cleanup
+
 ### v0.3.0
 
 * Add feature to show recent stories from email alerts database
