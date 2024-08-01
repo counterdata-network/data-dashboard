@@ -1,19 +1,16 @@
 import streamlit as st
+st.set_page_config(layout="wide")  # Steamlit needs this to be the first thing that happens
 from authentication import check_password
 import dashboard.database.processor_db as processor_db
 from dashboard import graph_functions as helper
-
-VERSION = "0.0.1"
-
-# Page configuration
-st.set_page_config(layout="wide")
+import dashboard
 
 # Authentication check
 if not check_password():
     st.stop()
 
 # Page Title
-st.title(f"Feminicides Story Dashboard {VERSION}")
+st.title(f"Feminicides Story Dashboard {dashboard.VERSION}")
 st.markdown("Investigate stories moving through the feminicides detection pipeline")
 st.divider()
 
