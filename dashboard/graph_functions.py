@@ -55,7 +55,7 @@ def draw_graph(func, project_id=None, above_threshold=None):
         .mark_bar()
         .encode(
             x=altair.X('day:T', axis=altair.Axis(title="Date", format="%m-%d"),
-                    scale=altair.Scale(domain=_get_updated_domain(chart['day'].min()))),
+                       scale=altair.Scale(domain=_get_updated_domain(chart['day'].min()))),
             y=altair.Y('stories:Q', axis=altair.Axis(title="Story Count")),
             color=altair.Color('platform:N', legend=altair.Legend(title='Platform')),
             size=altair.SizeValue(8)
@@ -231,12 +231,14 @@ def latest_stories(stories):
         hide_index=True,
         use_container_width=True,
     )
+
+
 def latest_articles(articles):
     data = []
     for a in articles:
         data.append({
             "id": a.get("id", ""),
-            "title":  a.get("title", ""),
+            "title": a.get("title", ""),
             "source": a.get("source", ""),
             "url": a.get("url", ""),
             "publish_date": str(a.get("publish_date", "")),
@@ -260,3 +262,27 @@ def latest_articles(articles):
         hide_index=True,
         use_container_width=True
     )
+
+
+def event_counts_draw_graph(func, project_id=None, limit=45):
+    """
+    Draw a graph of unique event counts by creation date.
+    """
+    # Fetch data using the function
+    results = func(project_id=project_id, limit=limit)
+    chart = pd.DataFrame(results)
+
+    # Create the bar chart
+    bar_chart = (
+        altair.Chart(chart)
+        .mark_bar(color='#FA8072')
+        .encode(
+            x=altair.X('day:T', scale=altair.Scale(domain=_get_updated_domain(chart['day'].min())),
+                       axis=altair.Axis(title="Date", format="%m-%d")),
+            y=altair.Y('unique_event_count:Q', axis=altair.Axis(title='Unique Event Count')),
+            size=altair.SizeValue(8)
+        )
+    )
+
+    st.altair_chart(bar_chart, use_container_width=True)
+    return
