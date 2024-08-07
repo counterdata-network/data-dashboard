@@ -1,6 +1,7 @@
 import datetime as dt
 import logging
 from typing import Dict, List
+import pandas as pd
 
 import psycopg
 from psycopg.rows import dict_row
@@ -113,4 +114,30 @@ def recent_articles(project_id: int, limit: int = 100) -> List:
                 publish_date DESC
             LIMIT {limit};
         """.format(project_id=project_id, limit=limit)
+    return _run_query(query)
+
+
+def event_counts_by_creation_date(
+        project_id: int = None,
+        limit: int = 45
+) -> List[Dict]:
+    """
+    Retrieve the count of distinct article_event_id values grouped by created_at day.
+    """
+    earliest_date = dt.date.today() - dt.timedelta(days=limit)
+
+    clauses = []
+    if project_id is not None:
+        clauses.append(f"project_id = {project_id}")
+
+    query = (
+        f"SELECT created_at::date AS day, "
+        f"       COUNT(DISTINCT article_event_id) AS unique_event_count "
+        f"FROM articles "
+        f"WHERE created_at IS NOT NULL "
+        f"  AND created_at >= '{earliest_date}'::DATE "
+        f"{' AND ' + ' AND '.join(clauses) if clauses else ''} "
+        f"GROUP BY day "
+        f"ORDER BY day DESC;"
+    )
     return _run_query(query)

@@ -196,3 +196,9 @@ if option != "Click Here to Get A Project's Report":
         st.write("_Error. Perhaps no stories to show here?_")
 
     st.divider()
+    # Event Count by Creation Date
+    st.subheader("Event Count by Creation Date")
+    try:
+        helper.event_counts_draw_graph(alerts.event_counts_by_creation_date, project_id=selected["id"])
+    except (ValueError, KeyError):
+        st.write("_Error. Perhaps no stories to show here?_")
