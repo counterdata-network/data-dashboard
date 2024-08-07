@@ -137,7 +137,7 @@ def event_counts_by_creation_date(
         f"WHERE created_at IS NOT NULL "
         f"  AND created_at >= '{earliest_date}'::DATE "
         f"{' AND ' + ' AND '.join(clauses) if clauses else ''} "
-        f"GROUP BY created_at::date "
-        f"ORDER BY created_at::date DESC;"
+        f"GROUP BY day "
+        f"ORDER BY day DESC;"
     )
     return _run_query(query)
