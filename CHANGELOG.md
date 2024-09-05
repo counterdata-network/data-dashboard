@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+### v1.0.0
+
+* Add chart of project event counts by day
+* Clean up some new queries
+
 ### v0.3.1
 
 * Make sure all charts extend to today even they don't have any data for the last few days
