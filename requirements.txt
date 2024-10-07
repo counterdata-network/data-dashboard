@@ -5,12 +5,5 @@ pandas==2.2.*            # Data manipulation and analysis
 streamlit==1.36.*        # Framework for creating web applications
 altair==5.3.*            # Declarative statistical visualization library
 
-# Libraries for error tracking and handling
+# Library for error tracking and handling
 sentry_sdk==2.9.*       # Error tracking and monitoring
-
-# Standard formatting utilities and tools
-aiocontextvars==0.2.*    # Context variables for asynchronous I/O
-pre-commit==3.7.0        # Code quality and style checks before commit
-black==24.4.2            # Code formatting tool
-commitizen==3.27.0       # Commit message convention tool
-ruff==0.5.1              # Pre-commit hook management tool
