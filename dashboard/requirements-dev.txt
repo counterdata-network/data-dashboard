@@ -1,5 +1,4 @@
 # Formatting and utilities and tools
-aiocontextvars==0.2.*    # Context variables for asynchronous I/O
 pre-commit==3.7.0        # Code quality and style checks before commit
 black==24.4.2            # Code formatting tool
 commitizen==3.27.0       # Commit message convention tool
