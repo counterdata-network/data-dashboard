@@ -1,14 +1,15 @@
 Feminicide Story Dashboard
 ==========================
 
-Investigate how stories have moved through the feminucides story detection pipeline. Part of the [Data Against 
+Investigate how stories have moved through the feminicides story detection pipeline. Part of the [Data Against 
 Feminicide project](http://datoscontrafeminicidio.net/).
 
 Install for Development
------------------------
+-----------------------  
 
 1. Install Python v3.10.* (we typically use conda or pyenv for this)
 2. Install Python requirements: `pip install -r requirements.txt`
+- 2a. Additionally install the dev dependencies through: `pip install -r requirements-dev.txt` or `pip install -r requirements*` to install all python dependencies 
 3. cp `.env.template .env` and fill in the appropriate info for each setting in that file
 
 Running
