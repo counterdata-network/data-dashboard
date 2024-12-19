@@ -169,6 +169,15 @@ if option != "Click Here to Get A Project's Report":
     st.metric(label=f"Total Stories in Email-Alerts for Project {selected_project_id} - {selected['title']}",
               value=total_email_alerts_story_count)
 
+    # Relevancy Pie Chart for Stories in Email-Alerts for Specified Project.
+    st.subheader("Relevancy Breakdown of Stories in Email-Alerts for Project ")
+    try:
+        helper.relevance_counts_chart(alerts.relevance_counts_by_project, project_id=selected["id"])
+    except (ValueError, KeyError):
+        st.write("_Error. Perhaps no stories to show here?_")
+
+    st.divider()
+
     # Top Media Sources
     st.subheader("Top 10 Media Sources by Story Count")
 

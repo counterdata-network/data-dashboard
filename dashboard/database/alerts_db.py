@@ -141,3 +141,29 @@ def event_counts_by_creation_date(
         f"ORDER BY day DESC;"
     )
     return _run_query(query)
+
+def relevance_counts_by_project(
+        project_id: int = None,
+        limit: int = 45
+) -> List[Dict]:
+    """
+    Retrieve relevancy counts filtered by project_id and a date range based on updated_at day (latest reporting).
+
+    """
+    earliest_date = dt.date.today() - dt.timedelta(days=limit)
+
+    clauses = []
+    if project_id is not None:
+        clauses.append(f"project_id = {project_id}")
+
+    query = (
+        f"SELECT "
+        f"    COUNT(CASE WHEN is_relevant = TRUE THEN 1 END) AS yes_count, "
+        f"    COUNT(CASE WHEN is_relevant = FALSE THEN 1 END) AS no_count, "
+        f"    COUNT(CASE WHEN is_relevant IS NULL THEN 1 END) AS null_count "
+        f"FROM article_events "
+        f"WHERE updated_at IS NOT NULL "
+        f"  AND updated_at >= '{earliest_date}'::DATE "
+        f"{' AND ' + ' AND '.join(clauses) if clauses else ''};"
+    )
+    return _run_query(query)
