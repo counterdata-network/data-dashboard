@@ -286,3 +286,41 @@ def event_counts_draw_graph(func, project_id=None, limit=45):
 
     st.altair_chart(bar_chart, use_container_width=True)
     return
+
+
+def relevance_counts_chart(func, project_id=None, limit=45):
+    """
+    Generate a pie chart w/ percentages,showing the relevancy distribution of above_threshold stories for a specific project.
+    """
+    # fetch data using the function
+    results = func(project_id=project_id, limit=limit)
+
+    # prepare data
+    data = pd.DataFrame([
+        {"category": "TRUE", "count": results[0]['true_count']},
+        {"category": "FALSE", "count": results[0]['false_count']},
+        {"category": "NULL", "count": results[0]['null_count']}
+    ])
+
+
+    total_count = data['count'].sum()
+    data['percentage'] = (data['count'] / total_count) * 100
+
+    # create the pie chart
+    pie_chart = (
+        altair.Chart(data)
+        .mark_arc()
+        .encode(
+            theta=altair.Theta(field="percentage", type="quantitative"),
+            color=altair.Color(field="category", type="nominal", legend=altair.Legend(title="Relevancy")),
+            tooltip=[
+                altair.Tooltip(field="category", type="nominal", title="Category"),
+                altair.Tooltip(field="count", type="quantitative", title="Count"),
+                altair.Tooltip(field="percentage", type="quantitative", format=".2f", title="Percentage (%)")
+            ]
+        )
+        .properties(title="Relevance Distribution")
+    )
+
+    st.altair_chart(pie_chart, use_container_width=True)
+    return
