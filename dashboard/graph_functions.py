@@ -297,8 +297,8 @@ def relevance_counts_chart(func, project_id=None, limit=45):
 
     # prepare data
     data = pd.DataFrame([
-        {"category": "TRUE", "count": results[0]['true_count']},
-        {"category": "FALSE", "count": results[0]['false_count']},
+        {"category": "TRUE", "count": results[0]['yes_count']},
+        {"category": "FALSE", "count": results[0]['no_count']},
         {"category": "NULL", "count": results[0]['null_count']}
     ])
 
