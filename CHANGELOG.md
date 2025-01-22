@@ -1,6 +1,9 @@
 Change Log
 ==========
 
+### v1.1.1
+* Fix to relevance pie chart on project page
+
 ### v1.1.0
 
 * Separate dev and prod requirements 
