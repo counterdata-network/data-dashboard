@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+### v1.1.0
+
+* Separate dev and prod requirements 
+* Update python runtime
+* Add relevant pie chart to project page
+
 ### v1.0.0
 
 * Add chart of project event counts by day
