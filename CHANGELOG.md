@@ -31,7 +31,7 @@ Change Log
 ### v0.2.0
 
 * Add password protection
-* Update depedencies to latest
+* Update dependencies to latest
 
 ### v0.1.3
 
