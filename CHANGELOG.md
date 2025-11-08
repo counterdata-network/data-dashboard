@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+### v1.2.1
+
+* Switch from runtime.txt to .python-version
+
 ### v1.2.0
 
 * Add support for NewsData.io as a data source for stories
