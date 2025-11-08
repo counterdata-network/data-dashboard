@@ -1,7 +1,12 @@
 Change Log
 ==========
 
+### v1.2.0
+
+* Add support for NewsData.io as a data source for stories
+
 ### v1.1.1
+
 * Fix to relevance pie chart on project page
 
 ### v1.1.0
