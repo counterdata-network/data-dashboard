@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+### v1.2.2
+
+* Fix newsdata.io constant to match story-processor
+
 ### v1.2.1
 
 * Switch from runtime.txt to .python-version
