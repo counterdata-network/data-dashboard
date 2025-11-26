@@ -11,7 +11,7 @@ VERSION = "1.2.1"
 SOURCE_MEDIA_CLOUD = "media-cloud"
 SOURCE_NEWSCATCHER = "newscatcher"
 SOURCE_WAYBACK_MACHINE = "wayback-machine"
-SOURCE_NEWSDATA = "newsdata"
+SOURCE_NEWSDATA = "newsdata.io"
 PLATFORMS = [SOURCE_MEDIA_CLOUD, SOURCE_NEWSCATCHER, SOURCE_WAYBACK_MACHINE, SOURCE_NEWSDATA]
 
 load_dotenv()  # load config from .env file (local) or env vars (production)
