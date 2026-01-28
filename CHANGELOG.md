@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+### v1.2.3
+
+* Tweak color palette on charts for better visibility
+
 ### v1.2.2
 
 * Fix newsdata.io constant to match story-processor
