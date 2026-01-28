@@ -6,7 +6,7 @@ from typing import List
 import dashboard.database.processor_db as processor_db
 from dashboard import PLATFORMS
 
-COLOR_SCALE_NAME = 'tableau10'
+COLOR_SCALE_NAME = 'set1'
 
 def _to_altair_datetime(original_datetime):
     """Convert a pandas datetime to an Altair datetime object.
