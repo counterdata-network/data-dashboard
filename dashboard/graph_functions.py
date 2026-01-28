@@ -6,6 +6,7 @@ from typing import List
 import dashboard.database.processor_db as processor_db
 from dashboard import PLATFORMS
 
+COLOR_SCALE_NAME = 'tableau10'
 
 def _to_altair_datetime(original_datetime):
     """Convert a pandas datetime to an Altair datetime object.
@@ -57,7 +58,8 @@ def draw_graph(func, project_id=None, above_threshold=None):
             x=altair.X('day:T', axis=altair.Axis(title="Date", format="%m-%d"),
                        scale=altair.Scale(domain=_get_updated_domain(chart['day'].min()))),
             y=altair.Y('stories:Q', axis=altair.Axis(title="Story Count")),
-            color=altair.Color('platform:N', legend=altair.Legend(title='Platform')),
+            color=altair.Color('platform:N', scale=altair.Scale(scheme=COLOR_SCALE_NAME),
+                               legend=altair.Legend(title='Platform')),
             size=altair.SizeValue(8)
         )
     )
@@ -106,7 +108,7 @@ def draw_bar_chart_sources(func, project_id=None, limit=10):
             x=altair.X("story_count:Q", title="Story Count"),
             y=altair.Y("media_name:N", title="Media Source"),
             color=altair.Color(
-                "media_name:N", scale=altair.Scale(scheme="category20b")
+                "media_name:N", scale=altair.Scale(scheme=COLOR_SCALE_NAME)
             ),
             tooltip=["media_name:N", "story_count:Q"],
         )
@@ -312,7 +314,8 @@ def relevance_counts_chart(func, project_id=None, limit=45):
         .mark_arc()
         .encode(
             theta=altair.Theta(field="percentage", type="quantitative"),
-            color=altair.Color(field="category", type="nominal", legend=altair.Legend(title="Relevancy")),
+            color=altair.Color(field="category", type="nominal", legend=altair.Legend(title="Relevancy"),
+                               scale=altair.Scale(scheme=COLOR_SCALE_NAME)),
             tooltip=[
                 altair.Tooltip(field="category", type="nominal", title="Category"),
                 altair.Tooltip(field="count", type="quantitative", title="Count"),
